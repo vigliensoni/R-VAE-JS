@@ -1,0 +1,29 @@
+{
+  "name": "webpack-demo",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs": "^1.7.0",
+    "@tonejs/midi": "^2.0.20",
+    "@tonejs/ui": "0.0.9",
+    "@webcomponents/webcomponentsjs": "^2.4.3",
+    "fs": "0.0.1-security",
+    "glob": "^7.1.6",
+    "http-server": "^0.12.1",
+    "lodash": "^4.17.15",
+    "path": "^0.12.7",
+    "tone": "^13.8.25"
+  }
+}
