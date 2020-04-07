@@ -299,7 +299,7 @@ async function generatePattern(z1, z2, threshold, noise_range){
 
 
 let canvas = document.getElementById("performanceCanvas");
-canvas.addEventListener('click', getMouse, false);
+canvas.addEventListener('mousedown', getMouse, false);
 
 // let [x, y] = canvasDef.getMouse;
 // console.log(x,y);
