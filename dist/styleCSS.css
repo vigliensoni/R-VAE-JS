@@ -1,0 +1,47 @@
+#inner-container {
+  background-color: #8ED9FF;
+  width:800px;
+  padding:20px;
+  position:absolute;
+}
+
+#main-container {
+  background-color: #8ED9FF;
+  width:auto;
+  height:800px;
+}
+
+body {
+  font-family: 'Staatliches';
+  font-size: 30px;
+  color: black;
+  text-align: left;
+}
+
+#subtitle {
+  font-size: 70%;
+  
+}
+
+button {
+  background-color: transparent;
+  color:grey;
+  border:solid black 5px;
+  width:120px;
+  padding:10px;
+  margin:10px;
+  font-family: 'Staatliches';
+    font-size: 25px;
+}
+
+button:hover {
+  background-color: transparent;
+  color:#FFD12C;
+  border:solid #FFD12C 5px;
+}
+
+/* #performanceCanvas {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+} */
