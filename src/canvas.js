@@ -1,3 +1,5 @@
+// THIS FILE MAKES THE CANVAS PERFORMANCE SPACE
+
 let mouseX;
 let mouseY;
 
