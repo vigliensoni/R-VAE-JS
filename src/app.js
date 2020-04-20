@@ -1,3 +1,5 @@
+// THIS FILE CREATES CONTROLS THE AUDIO CLOCK AND SAMPLES
+
 import { drumOnsets } from "."
 
 const playButton = document.getElementById('playButton')
@@ -18,12 +20,36 @@ var snare = new maxi.maxiSample()
 var hihat = new maxi.maxiSample()
 var clock = new maxi.maxiClock()
 
+// control sequencer 
 const subdiv = 48 // 4 * 24 -> 1 beat
-const ticksperbeat = 12
-clock.setTempo(120)
+const ticksperbeat = 12 // GV: why this is 12 and not 24?
+clock.setTempo(160)
 clock.setTicksPerBeat(ticksperbeat)
 
-// var oscilloscope,spectrogram;
+// declare variables for dial
+var thresholdValue
+var noiseValue
+
+// create dials
+const threshold = new Nexus.Dial('thresholdDial', {
+  interaction: 'vertical',
+  mode: 'absolute',
+  min: 0.01,
+  max: 0.99,
+  step: 0.01,
+  value: 0.5
+})
+
+const noise = new Nexus.Dial('noiseDial', {
+  interaction: 'vertical',
+  mode: 'absolute',
+  min: 0.00,
+  max: 1.0,
+  step: 0.01,
+  value: 0.0
+})
+
+// console.log(threshold)
 
 // INIT PATTERNS
 var kkPat = []
@@ -50,6 +76,9 @@ const playAudio = () => {
   Nexus.context = maxiEngine.context
   const oscilloscope = new Nexus.Oscilloscope('oscilloscope', { size: [400, 100] }).connect(maxiEngine.maxiAudioProcessor)
   const spectrogram = new Nexus.Spectrogram('spectrogram', { size: [400, 100] }).connect(maxiEngine.maxiAudioProcessor)
+  
+ 
+
 
   maxiEngine.play = function () {
     var w = 0
@@ -97,21 +126,30 @@ let canvas = document.getElementById("performanceCanvas");
 
 // }
 
+// dials
+threshold.on('change', function(t) {
+  thresholdValue = t
+})
 
-canvas.addEventListener('mousemove', event => {
+noise.on('change', function(n) {
+  noiseValue = n
+})
+
+// performance space listeners
+canvas.addEventListener('mousedown', event => {
   // kkPat = randomPattern()
   kkPat = drumOnsets[0]
   console.log(kkPat)
   // console.log(drumOnsets[0])
 })
 
-canvas.addEventListener('mousemove', event => {
+canvas.addEventListener('mousedown', event => {
   // snPat = randomPattern()
   snPat = drumOnsets[1]
   // console.log(snPat)
 })
 
-canvas.addEventListener('mousemove', event => {
+canvas.addEventListener('mousedown', event => {
   // hhPat = randomPattern()
   hhPat = drumOnsets[2]
   // console.log(hhPat)
@@ -133,4 +171,4 @@ function randomPattern () {
 
 
 
-export { playAudio }
+export { playAudio, thresholdValue, noiseValue }
