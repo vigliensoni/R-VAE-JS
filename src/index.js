@@ -151,7 +151,7 @@ function processMidiFile(filename){
     var midiFile = new Midi(input);  
     if (isValidMIDIFile(midiFile) == false){
         // utils.error("Invalid MIDI file: " + filename);
-        console.log("Invalid MIDI file: " + filename);
+        // console.log("Invalid MIDI file: " + filename);
         return false;
     }
 
@@ -190,7 +190,7 @@ vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE/feat-auto-dup
 // GENERATE 
 /////////////////////////////////////////////////////////////
 
-function generate(z1, z2, threshold, noise_range = 0.0) {
+function generate(z1, z2, threshold = 0.5, noise_range = 0.0) {
     try {
         generatePattern(z1, z2, threshold, noise_range);
         // console.log('GV generatePattern');
@@ -234,8 +234,6 @@ async function generatePattern(z1, z2, threshold, noise_range){
         // GV Missing here is to store the velocity for each onset
         let onsetIndices = sequence.map((value, index) => value > 0 ? index : undefined).filter(x => x !== undefined)
         drumOnsets[i] = onsetIndices
-        // console.log(drumOnsets)
-        // console.log(onsetIndices)
       }
     //   Max.outlet("generated", 1);
     //   console.log("generated", 1);
@@ -299,7 +297,7 @@ async function generatePattern(z1, z2, threshold, noise_range){
 
 
 let canvas = document.getElementById("performanceCanvas");
-canvas.addEventListener('mousedown', getMouse, false);
+canvas.addEventListener('mousemove', getMouse, false);
 
 // let [x, y] = canvasDef.getMouse;
 // console.log(x,y);
@@ -308,10 +306,13 @@ canvas.addEventListener('mousedown', getMouse, false);
 function getMouse (mousePosition) {
     let mouseX = mousePosition.layerX
     let mouseY = mousePosition.layerY
-    console.log(mouseX, mouseY)
+    // console.log(mouseX, mouseY)
     let normalize = (x, max, scaleToMax) => (x/max - 0.5) * 2 * scaleToMax
-    generate(normalize(mouseX, canvas.width, 3), normalize(mouseY, canvas.height, 3), 0.5, 0.5)
-    // console.log(mouseX, normalize(mouseX, canvas.width, 3), mouseY, normalize(mouseY, canvas.height, 3));
+    generate(normalize(mouseX, canvas.width, 3), 
+            normalize(mouseY, canvas.height, 3), 
+            sequencerApp.thresholdValue, 
+            sequencerApp.noiseValue)
+
 }
 
 export { drumOnsets } 
