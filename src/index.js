@@ -182,7 +182,7 @@ function processMidiFile(filename){
 
 
 // Fix CORS issues, for now loading it from Github
-vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE/feat-auto-duplicate-training-data/data/models/11-clips-footwotk-triplets.model/model.json");
+vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-JS/master/dist/data/11-clips-footwotk-triplets.model/model.json");
 // console.log('GV vae!');
 
 
