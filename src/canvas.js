@@ -20,8 +20,9 @@ canvas.setAttribute("height", canvasHeight);
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 
-canvas.style.top = 0;
-canvas.style.right = 0;
+canvas.style.top = 0
+canvas.style.right = 0
+
 
 canvas.addEventListener('mousemove', getMouse, false);
 
