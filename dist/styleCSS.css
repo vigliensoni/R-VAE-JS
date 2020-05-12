@@ -18,9 +18,16 @@ body {
   text-align: left;
 }
 
+#title {
+  font-size: 200%; 
+}
+
 #subtitle {
-  font-size: 70%;
-  
+  font-size: 70%; 
+}
+
+#section {
+  font-size: 50%; 
 }
 
 button {
@@ -38,6 +45,12 @@ button:hover {
   background-color: transparent;
   color:#FFD12C;
   border:solid #FFD12C 5px;
+}
+
+#knobs {
+  display: inline-block;
+  color: #red;
+  font-size: 100%;
 }
 
 /* #performanceCanvas {
