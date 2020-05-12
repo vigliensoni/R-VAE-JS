@@ -31,16 +31,16 @@ var thresholdValue
 var noiseValue
 
 // create dials
-const threshold = new Nexus.Dial('thresholdDial', {
+const threshold = new Nexus.Dial('#thresholdDial', {
   interaction: 'vertical',
   mode: 'absolute',
   min: 0.01,
   max: 0.99,
   step: 0.01,
-  value: 0.5
+  value: 0.99
 })
 
-const noise = new Nexus.Dial('noiseDial', {
+const noise = new Nexus.Dial('#noiseDial', {
   interaction: 'vertical',
   mode: 'absolute',
   min: 0.00,
@@ -55,6 +55,9 @@ const noise = new Nexus.Dial('noiseDial', {
 var kkPat = []
 var snPat = []
 var hhPat = []
+var kkLevel = 1
+var snLevel = 1
+var hhLevel = 1
 
 // when the play button is pressed...
 const playAudio = () => {
@@ -106,9 +109,11 @@ const playAudio = () => {
       }
     }
     
-    w = kick.playOnce()
-    w += snare.playOnce()
-    w += hihat.playOnce() * 0.25
+
+    
+    w = kick.playOnce() * kkLevel
+    w += snare.playOnce() * snLevel
+    w += hihat.playOnce() * 0.25 * hhLevel
     return w
   }
 }
@@ -154,6 +159,42 @@ canvas.addEventListener('mousedown', event => {
   hhPat = drumOnsets[2]
   // console.log(hhPat)
 })
+
+
+// button listeners
+
+// kickPatternbutton.addEventListener('mousedown', event => {
+//   console.log('1', event.state)
+//   if ( event.state != "muted" ) {
+//     kkLevel = 0
+//     event.state = "muted"
+//   } else if (event.state == "muted") {
+//     kkLevel = 1
+//     event.state = "play"
+//   }
+//   console.log('2', event.state)
+// })
+
+window.addEventListener("keydown", event => {
+  if (event.key == "q") {
+    kkLevel = 0
+  } else if (event.key == "w") {
+    snLevel = 0
+  } else if (event.key == "e") {
+    hhLevel = 0
+  }
+})
+
+window.addEventListener("keyup", event => {
+  if (event.key == "q") {
+    kkLevel = 1
+  } else if (event.key == "w") {
+    snLevel = 1
+  } else if (event.key == "e") {
+    hhLevel = 1
+  }
+})
+
 
 function randomNumber (n = 16) {
   return Math.floor(n * Math.random())
