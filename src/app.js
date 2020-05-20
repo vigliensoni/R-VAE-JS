@@ -1,6 +1,8 @@
 // THIS FILE CREATES CONTROLS THE AUDIO CLOCK AND SAMPLES
 
 import { drumOnsets } from "."
+import { isDrawing } from './canvas.js';
+
 
 const playButton = document.getElementById('playButton')
 const clockUI = document.getElementById('clock')
@@ -123,8 +125,7 @@ const playAudio = () => {
       }
     }
     
-
-    
+    // console.log('isdrawing: ', isDrawing)
     w = kick.playOnce() * kkLevel
     w += snare.playOnce() * snLevel
     w += hihat.playOnce() * 0.25 * hhLevel
@@ -159,7 +160,6 @@ canvas.addEventListener('mousedown', event => {
   // kkPat = randomPattern()
   kkPat = drumOnsets[0]
   console.log(kkPat)
-  // console.log(drumOnsets[0])
 })
 
 canvas.addEventListener('mousedown', event => {
