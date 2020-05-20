@@ -8,6 +8,17 @@ const kickPatternbutton = document.getElementById('kickPatternbutton')
 const snarePatternbutton = document.getElementById('snarePatternbutton')
 const hihatPatternbutton = document.getElementById('hihatPatternbutton')
 
+// load WebMIDI
+WebMidi.enable(function (err) {
+  if (err) {
+    console.log("WebMidi could not be enabled.", err)
+  } else {
+    console.log("WebMidi enabled!")
+    console.log("WebMidi Outputs: ", WebMidi.outputs)
+  }
+});
+
+
 // create a maximilian object
 var maxi = maximilian()
 
@@ -100,12 +111,15 @@ const playAudio = () => {
 
       if (kkPat.indexOf(tickCounter) >= 0) {
         kick.trigger()
+        WebMidi.outputs[1].playNote("C1")
       }
       if (snPat.indexOf(tickCounter) >= 0) {
         snare.trigger()
+        WebMidi.outputs[1].playNote("A1")
       }
       if (hhPat.indexOf(tickCounter) >= 0) {
         hihat.trigger()
+        WebMidi.outputs[1].playNote("G#1")
       }
     }
     
