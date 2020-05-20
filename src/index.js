@@ -32,7 +32,7 @@ import * as canvasDef from './canvas.js';
 
 // DRUM SAMPLE RANDOM SEQUENCER
 import * as sequencerApp from './app.js';
-sequencerApp.playAudio()
+// sequencerApp.playAudio()
 
 // This will be printed directly to the Max console
 // Max.post(`Loaded the ${path.basename(__filename)} script`);

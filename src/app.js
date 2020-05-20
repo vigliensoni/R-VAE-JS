@@ -208,7 +208,7 @@ function randomPattern () {
   return rp
 }
 
-
+playButton.addEventListener('click', () => playAudio())
 
 
 
