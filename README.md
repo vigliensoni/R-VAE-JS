@@ -1,16 +1,22 @@
 # R-VAE-JS
-R-VAE on the browser: https://vigliensoni.github.io/R-VAE-JS/
+## RELS: Rhythmic explorations of latent spaces
+
+This web-based device enables the easy exploration of a latent space learned from a dataset of rhythms using a VAE.
 
 Based on [Nao Tokui's RhythmVAE](https://github.com/naotokui/RhythmVAE_M4L)
 
-Currently only working in Firefox.
+Currently only working on Firefox.
+
+Play with R-VAE on the browser: https://vigliensoni.github.io/R-VAE-JS/
+
+
+### Installation:
 
 To create distribution
 
 ``` bash
 npm run build
 ```
-
 
 After webpack is executed all the required components will be packaged and ready to be used in the `dist` folder.
 
