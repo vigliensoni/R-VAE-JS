@@ -125,7 +125,6 @@ const playAudio = () => {
       }
     }
     
-    // console.log('isdrawing: ', isDrawing)
     w = kick.playOnce() * kkLevel
     w += snare.playOnce() * snLevel
     w += hihat.playOnce() * 0.25 * hhLevel
@@ -155,24 +154,16 @@ noise.on('change', function(n) {
   noiseValue = n
 })
 
-// performance space listeners
-canvas.addEventListener('mousedown', event => {
-  // kkPat = randomPattern()
-  kkPat = drumOnsets[0]
-  console.log(kkPat)
+
+// Retrieve patterns from latent space when mouse moves and drags (drawing)
+canvas.addEventListener('mousemove', event => {
+  if (isDrawing) {
+    kkPat = drumOnsets[0]
+    snPat = drumOnsets[1]
+    hhPat = drumOnsets[2]
+  }
 })
 
-canvas.addEventListener('mousedown', event => {
-  // snPat = randomPattern()
-  snPat = drumOnsets[1]
-  // console.log(snPat)
-})
-
-canvas.addEventListener('mousedown', event => {
-  // hhPat = randomPattern()
-  hhPat = drumOnsets[2]
-  // console.log(hhPat)
-})
 
 
 // button listeners
