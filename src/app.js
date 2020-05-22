@@ -112,16 +112,22 @@ const playAudio = () => {
       
 
       if (kkPat.indexOf(tickCounter) >= 0) {
-        kick.trigger()
-        WebMidi.outputs[1].playNote("C1")
+        if (kkLevel != 0) {
+          kick.trigger()
+          WebMidi.outputs[1].playNote("C1")
+        }
       }
       if (snPat.indexOf(tickCounter) >= 0) {
-        snare.trigger()
-        WebMidi.outputs[1].playNote("A1")
+        if (snLevel != 0) {
+          snare.trigger()
+          WebMidi.outputs[1].playNote("A1")
+        }
       }
       if (hhPat.indexOf(tickCounter) >= 0) {
-        hihat.trigger()
-        WebMidi.outputs[1].playNote("G#1")
+        if (hhLevel != 0) {
+          hihat.trigger()
+          WebMidi.outputs[1].playNote("G#1")
+        }
       }
     }
     
