@@ -132,18 +132,7 @@ const playAudio = () => {
   }
 }
 
-let canvas = document.getElementById("performanceCanvas");
-// canvas.addEventListener('mousemove', getMouse, false);
 
-// function getMouse (mousePosition) {
-//   // let mouseX = mousePosition.layerX
-//   // let mouseY = mousePosition.layerY
-//   // let normalize = (x, max = 3) => (x/canvas.width - 0.5) * max * 2
-  
-//   // console.log( normalize(mouseX), normalize(mouseY) )
-//   // console.log( drumOnsets )
-
-// }
 
 // dials
 threshold.on('change', function(t) {
@@ -154,6 +143,8 @@ noise.on('change', function(n) {
   noiseValue = n
 })
 
+
+let canvas = document.getElementById("performanceCanvas");
 
 // Retrieve patterns from latent space when mouse moves and drags (drawing)
 canvas.addEventListener('mousemove', event => {
