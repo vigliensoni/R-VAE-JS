@@ -165,17 +165,6 @@ canvas.addEventListener('mousemove', event => {
 
 // button listeners
 
-// kickPatternbutton.addEventListener('mousedown', event => {
-//   console.log('1', event.state)
-//   if ( event.state != "muted" ) {
-//     kkLevel = 0
-//     event.state = "muted"
-//   } else if (event.state == "muted") {
-//     kkLevel = 1
-//     event.state = "play"
-//   }
-//   console.log('2', event.state)
-// })
 
 window.addEventListener("keydown", event => {
   if (event.key == "q") {
