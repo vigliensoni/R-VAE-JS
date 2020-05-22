@@ -1,12 +1,25 @@
 // THIS FILE CREATES CONTROLS THE AUDIO CLOCK AND SAMPLES
 
 import { drumOnsets } from "."
+import { isDrawing } from './canvas.js';
+
 
 const playButton = document.getElementById('playButton')
 const clockUI = document.getElementById('clock')
 const kickPatternbutton = document.getElementById('kickPatternbutton')
 const snarePatternbutton = document.getElementById('snarePatternbutton')
 const hihatPatternbutton = document.getElementById('hihatPatternbutton')
+
+// load WebMIDI
+WebMidi.enable(function (err) {
+  if (err) {
+    console.log("WebMidi could not be enabled.", err)
+  } else {
+    console.log("WebMidi enabled!")
+    console.log("WebMidi Outputs: ", WebMidi.outputs)
+  }
+});
+
 
 // create a maximilian object
 var maxi = maximilian()
@@ -100,16 +113,17 @@ const playAudio = () => {
 
       if (kkPat.indexOf(tickCounter) >= 0) {
         kick.trigger()
+        WebMidi.outputs[1].playNote("C1")
       }
       if (snPat.indexOf(tickCounter) >= 0) {
         snare.trigger()
+        WebMidi.outputs[1].playNote("A1")
       }
       if (hhPat.indexOf(tickCounter) >= 0) {
         hihat.trigger()
+        WebMidi.outputs[1].playNote("G#1")
       }
     }
-    
-
     
     w = kick.playOnce() * kkLevel
     w += snare.playOnce() * snLevel
@@ -140,25 +154,16 @@ noise.on('change', function(n) {
   noiseValue = n
 })
 
-// performance space listeners
-canvas.addEventListener('mousedown', event => {
-  // kkPat = randomPattern()
-  kkPat = drumOnsets[0]
-  console.log(kkPat)
-  // console.log(drumOnsets[0])
+
+// Retrieve patterns from latent space when mouse moves and drags (drawing)
+canvas.addEventListener('mousemove', event => {
+  if (isDrawing) {
+    kkPat = drumOnsets[0]
+    snPat = drumOnsets[1]
+    hhPat = drumOnsets[2]
+  }
 })
 
-canvas.addEventListener('mousedown', event => {
-  // snPat = randomPattern()
-  snPat = drumOnsets[1]
-  // console.log(snPat)
-})
-
-canvas.addEventListener('mousedown', event => {
-  // hhPat = randomPattern()
-  hhPat = drumOnsets[2]
-  // console.log(hhPat)
-})
 
 
 // button listeners
