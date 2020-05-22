@@ -1,5 +1,7 @@
 // THIS FILE MAKES THE CANVAS PERFORMANCE SPACE
 
+import { kkMuted } from "./app.js"
+
 let mouseX;
 let mouseY;
 let isDrawing
@@ -74,7 +76,5 @@ function draw(colorFill) {
 }
 
 requestAnimationFrame(draw);
-
-
 
 export { isDrawing }
