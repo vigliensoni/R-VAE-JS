@@ -169,20 +169,27 @@ canvas.addEventListener('mousemove', event => {
 window.addEventListener("keydown", event => {
   if (event.key == "q") {
     kkMuted = true
+    kickPatternbutton.style.background="#FF0000"
+    console.log('muted')
   } else if (event.key == "w") {
     snMuted = true
+    snarePatternbutton.style.background="#FF0000"
   } else if (event.key == "e") {
     hhMuted = true
+    hihatPatternbutton.style.background="#FF0000"
   }
 })
 
 window.addEventListener("keyup", event => {
   if (event.key == "q") {
     kkMuted = false
+    kickPatternbutton.style.background="#FFFFFF"
   } else if (event.key == "w") {
     snMuted = false
+    snarePatternbutton.style.background="#FFFFFF"
   } else if (event.key == "e") {
     hhMuted = false
+    hihatPatternbutton.style.background="#FFFFFF"
   }
 })
 
