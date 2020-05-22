@@ -68,9 +68,9 @@ const noise = new Nexus.Dial('#noiseDial', {
 var kkPat = []
 var snPat = []
 var hhPat = []
-var kkLevel = 1
-var snLevel = 1
-var hhLevel = 1
+let kkMuted 
+let snMuted
+let hhMuted
 
 // when the play button is pressed...
 const playAudio = () => {
@@ -112,28 +112,28 @@ const playAudio = () => {
       
 
       if (kkPat.indexOf(tickCounter) >= 0) {
-        if (kkLevel != 0) {
+        if (kkMuted !== true) {
           kick.trigger()
           WebMidi.outputs[1].playNote("C1")
         }
       }
       if (snPat.indexOf(tickCounter) >= 0) {
-        if (snLevel != 0) {
+        if (snMuted !== true) {
           snare.trigger()
           WebMidi.outputs[1].playNote("A1")
         }
       }
       if (hhPat.indexOf(tickCounter) >= 0) {
-        if (hhLevel != 0) {
+        if (hhMuted !== true) {
           hihat.trigger()
           WebMidi.outputs[1].playNote("G#1")
         }
       }
     }
     
-    w = kick.playOnce() * kkLevel
-    w += snare.playOnce() * snLevel
-    w += hihat.playOnce() * 0.25 * hhLevel
+    w = kick.playOnce() 
+    w += snare.playOnce()
+    w += hihat.playOnce() * 0.25
     return w
   }
 }
@@ -179,21 +179,21 @@ canvas.addEventListener('mousemove', event => {
 
 window.addEventListener("keydown", event => {
   if (event.key == "q") {
-    kkLevel = 0
+    kkMuted = true
   } else if (event.key == "w") {
-    snLevel = 0
+    snMuted = true
   } else if (event.key == "e") {
-    hhLevel = 0
+    hhMuted = true
   }
 })
 
 window.addEventListener("keyup", event => {
   if (event.key == "q") {
-    kkLevel = 1
+    kkMuted = false
   } else if (event.key == "w") {
-    snLevel = 1
+    snMuted = false
   } else if (event.key == "e") {
-    hhLevel = 1
+    hhMuted = false
   }
 })
 
