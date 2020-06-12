@@ -2,7 +2,8 @@
 
 import { drumOnsets } from "."
 import { isDrawing } from './canvas.js';
-
+import * as vis from "./visualization.js"
+import { LOOP_DURATION } from "./constants";
 
 const playButton = document.getElementById('playButton')
 const clockUI = document.getElementById('clock')
@@ -31,14 +32,15 @@ var maxiEngine = new maxi.maxiAudio()
 var kick = new maxi.maxiSample()
 var snare = new maxi.maxiSample()
 var hihat = new maxi.maxiSample()
-var clock = new maxi.maxiClock()
+let clock = new maxi.maxiClock()
 
 // control sequencer 
 const subdiv = 48 // 4 * 24 -> 1 beat
 const ticksperbeat = 12 // GV: why this is 12 and not 24?
-clock.setTempo(160)
+clock.setTempo(20)
 clock.setTicksPerBeat(ticksperbeat)
 
+// console.log('clock', clock)
 // declare variables for dial
 var thresholdValue
 var noiseValue
@@ -94,22 +96,24 @@ const playAudio = () => {
   const spectrogram = new Nexus.Spectrogram('spectrogram', { size: [400, 100] }).connect(maxiEngine.maxiAudioProcessor)
   
  
-
+  
 
   maxiEngine.play = function () {
     var w = 0
     clock.ticker()
     if (clock.isTick()) {
       // let beatCounter = clock.playHead % 7;
-      var tickCounter = clock.playHead % subdiv
+      let tickCounter = clock.playHead % subdiv
       const beatCounter = Math.floor(clock.playHead / subdiv)
-      clockUI.innerHTML = (beatCounter + 1) + ' ' + Math.floor(tickCounter / ticksperbeat + 1) + ' ' + (tickCounter % ticksperbeat + 1)
-
+      clockUI.innerHTML = (beatCounter + 1) + ' ' + Math.floor(tickCounter / ticksperbeat + 1) + ' ' + (tickCounter % ticksperbeat + 1) 
+      
       // CHECK HOW TO CHANGE DATASTRUCTURE TO MATCH RVAE
       // if ( drumOnsets[0] ) {
       //   kick.trigger()
       // }
       
+      vis.visualize(clock.playHead % LOOP_DURATION)
+      // vis.visualize(subdiv)
 
       if (kkPat.indexOf(tickCounter) >= 0) {
         if (kkMuted !== true) {
@@ -211,3 +215,4 @@ playButton.addEventListener('click', () => playAudio())
 
 
 export { playAudio, thresholdValue, noiseValue }
+
