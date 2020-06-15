@@ -35,9 +35,9 @@ var hihat = new maxi.maxiSample()
 let clock = new maxi.maxiClock()
 
 // control sequencer 
-const subdiv = 48 // 4 * 24 -> 1 beat
-const ticksperbeat = 12 // GV: why this is 12 and not 24?
-clock.setTempo(20)
+const subdiv = 96 // 4 * 24 -> 1 beat
+const ticksperbeat = 24 // GV: why this is 12 and not 24?
+clock.setTempo(120)
 clock.setTicksPerBeat(ticksperbeat)
 
 // console.log('clock', clock)
@@ -91,9 +91,9 @@ const playAudio = () => {
   maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%201.wav", hihat)
 
   // show an oscilloscope and freqscope
-  Nexus.context = maxiEngine.context
-  const oscilloscope = new Nexus.Oscilloscope('oscilloscope', { size: [400, 100] }).connect(maxiEngine.maxiAudioProcessor)
-  const spectrogram = new Nexus.Spectrogram('spectrogram', { size: [400, 100] }).connect(maxiEngine.maxiAudioProcessor)
+  // Nexus.context = maxiEngine.context
+  // const oscilloscope = new Nexus.Oscilloscope('oscilloscope', { size: [400, 100] }).connect(maxiEngine.maxiAudioProcessor)
+  // const spectrogram = new Nexus.Spectrogram('spectrogram', { size: [400, 100] }).connect(maxiEngine.maxiAudioProcessor)
   
  
   
@@ -154,7 +154,7 @@ noise.on('change', function(n) {
 })
 
 
-let canvas = document.getElementById("performanceCanvas");
+let canvas = document.getElementById("LSVisualizer");
 
 // Retrieve patterns from latent space when mouse moves and drags (drawing)
 canvas.addEventListener('mousemove', event => {
