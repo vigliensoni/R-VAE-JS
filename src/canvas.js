@@ -17,7 +17,7 @@ let context = canvas.getContext("2d");
 canvasWidth = window.innerWidth / 2;
 canvasHeight = window.innerHeight / 2;
 
-canvas.style.position = "fixed"
+canvas.style.position = "relative"
 
 canvas.setAttribute("height", canvasHeight);
 

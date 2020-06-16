@@ -30,7 +30,7 @@ let matrix3 = new Uint8ClampedArray(ROWS * INST_SIDE * COLS * INST_SIDE * LOOP_D
 
 // LOADING DATA FROM MODEL
 // let url = 'https://raw.githubusercontent.com/vigliensoni/R-VAE/master/data/trap_all_files.model/model_202062_172427.model-matrix.data'
-let url = "http://localhost:8080/4-measure-bin-ternary/model_2020616_105235.model/model_2020616_10597.model-matrix.data"
+let url = "https://raw.githubusercontent.com/vigliensoni/R-VAE/master/data/4-measure-bin-ternary/model_2020616_105235.model/model_2020616_10597.model-matrix.data"
 
 
 async function getMatrix(url) {
