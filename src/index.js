@@ -182,8 +182,9 @@ function processMidiFile(filename){
 
 
 // Fix CORS issues, for now loading it from Github
-vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-JS/master/dist/data/11-clips-footwotk-triplets.model/model.json");
-// console.log('GV vae!');
+// vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-JS/master/dist/data/11-clips-footwotk-triplets.model/model.json"); // footwork
+// vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE/master/data/trap_all_files.model/model.json"); // footwork
+vae.loadModel("http://localhost:8080/4-measure-bin-ternary/model_2020616_105235.model/model.json"); // simple 4m
 
 
 /////////////////////////////////////////////////////////////
@@ -206,8 +207,8 @@ async function generatePattern(z1, z2, threshold, noise_range){
       if (isGenerating) return;
   
       isGenerating = true;
-      let [onsets, velocities, timeshifts] = vae.generatePattern(z1, z2, noise_range);
-      
+    //   note z2 axis is inverted, i.e., negative on top
+      let [onsets, velocities, timeshifts] = vae.generatePattern(z1, -1*z2, noise_range);
       let NUM_DRUM_CLASSES = 3; // GV: To generate only [kk, sn, hh]
     //   drumOnsets = {} // GV Empty variable before declaring it again. Needed?
 
@@ -296,7 +297,7 @@ async function generatePattern(z1, z2, threshold, noise_range){
 
 
 
-let canvas = document.getElementById("performanceCanvas");
+let canvas = document.getElementById("LSVisualizer");
 canvas.addEventListener('mousemove', getMouse, false);
 
 // let [x, y] = canvasDef.getMouse;

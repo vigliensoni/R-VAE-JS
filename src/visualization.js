@@ -29,7 +29,9 @@ const LSMatrix = new Float32Array(matLength)
 let matrix3 = new Uint8ClampedArray(ROWS * INST_SIDE * COLS * INST_SIDE * LOOP_DURATION * Px * Px * 4)
 
 // LOADING DATA FROM MODEL
-let url = 'https://raw.githubusercontent.com/vigliensoni/R-VAE/master/data/trap_all_files.model/model_202062_172427.model-matrix.data'
+// let url = 'https://raw.githubusercontent.com/vigliensoni/R-VAE/master/data/trap_all_files.model/model_202062_172427.model-matrix.data'
+let url = "http://localhost:8080/4-measure-bin-ternary/model_2020616_105235.model/model_2020616_10597.model-matrix.data"
+
 
 async function getMatrix(url) {
   return fetch(url).then(response => response.arrayBuffer())
@@ -122,15 +124,15 @@ function visualize(t) {
   idata.data.set(matrix3.slice(from, to))
   ctx.putImageData(idata,0,0)
 
-  timetag.innerText = "t:" + t + " f:" + from + " t:" + (to-1)
+  // timetag.innerText = "t:" + t + " f:" + from + " t:" + (to-1)
   time++
 }
 
-let timetag = document.getElementById("timetag")
+// let timetag = document.getElementById("timetag")
 
 // visualize(time)
 window.addEventListener("load", () => { visualize(0) }, false )
-timetag.addEventListener("click", () => { visualize(time) }, false )
+// timetag.addEventListener("click", () => { visualize(time) }, false )
 
 // while (true) {
 //   for (let t=0; t < 96; t++){

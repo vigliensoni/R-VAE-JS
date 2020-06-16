@@ -37,7 +37,7 @@ let clock = new maxi.maxiClock()
 // control sequencer 
 const subdiv = 96 // 4 * 24 -> 1 beat
 const ticksperbeat = 24 // GV: why this is 12 and not 24?
-clock.setTempo(120)
+clock.setTempo(90)
 clock.setTicksPerBeat(ticksperbeat)
 
 // console.log('clock', clock)
