@@ -184,8 +184,14 @@ function processMidiFile(filename){
 // Fix CORS issues, for now loading it from Github
 // vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-JS/master/dist/data/11-clips-footwotk-triplets.model/model.json"); // footwork
 // vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE/master/data/trap_all_files.model/model.json"); // footwork
-vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE/master/data/4-measure-bin-ternary/model_2020616_105235.model/model.json"); // simple 4m
+// vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE/master/data/4-measure-bin-ternary/model_2020616_105235.model/model.json"); // simple 4m
 
+// vae.loadModel("http://localhost:8080/footwork-model/model_2020616_135157.model/model.json")
+
+// FOOTWORK
+vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/footwork-model/model.json") 
+// TRAP
+vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/trap_all_files.model/model.json") 
 
 /////////////////////////////////////////////////////////////
 // GENERATE 

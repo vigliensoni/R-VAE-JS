@@ -28,9 +28,13 @@ const LSMatrix = new Float32Array(matLength)
 
 let matrix3 = new Uint8ClampedArray(ROWS * INST_SIDE * COLS * INST_SIDE * LOOP_DURATION * Px * Px * 4)
 
-// LOADING DATA FROM MODEL
-// let url = 'https://raw.githubusercontent.com/vigliensoni/R-VAE/master/data/trap_all_files.model/model_202062_172427.model-matrix.data'
-let url = "https://raw.githubusercontent.com/vigliensoni/R-VAE/master/data/4-measure-bin-ternary/model_2020616_105235.model/model_2020616_10597.model-matrix.data"
+// LOADING DATA FOR VISUALIZATION
+
+// FOOTWORK
+// let url = "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/footwork-model/model-matrix-LS.data"
+
+// TRAP
+let url = "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/trap_all_files.model/model-matrix-LS.data"
 
 
 async function getMatrix(url) {
