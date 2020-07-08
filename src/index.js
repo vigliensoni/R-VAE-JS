@@ -20,7 +20,9 @@ import { DRUM_CLASSES } from './constants.js';
 import { NUM_DRUM_CLASSES } from './constants.js';
 import { LOOP_DURATION } from './constants.js';
 import { MIN_ONSETS_THRESHOLD } from './constants.js';
+import { MODELS_LS_DATA } from './constants.js';
 const NUM_MIN_MIDI_FILES = 64;
+
 
 // VAE model and Utilities
 import * as utils from './utils.js';
@@ -189,9 +191,14 @@ function processMidiFile(filename){
 // vae.loadModel("http://localhost:8080/footwork-model/model_2020616_135157.model/model.json")
 
 // FOOTWORK
-vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/footwork-model/model.json") 
+vae.loadModel(MODELS_LS_DATA['footwork']['model-url'])
+// vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/footwork-model/model.json") 
+
 // TRAP
-vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/trap_all_files.model/model.json") 
+// vae.loadModel(MODELS_LS_DATA['footwork']['model-url'])
+// vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/trap_all_files.model/model.json") 
+
+
 
 /////////////////////////////////////////////////////////////
 // GENERATE 

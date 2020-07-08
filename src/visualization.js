@@ -1,3 +1,5 @@
+import { MODELS_LS_DATA } from './constants.js'
+
 const ROWS = 30
 const COLS = 30
 const LOOP_DURATION = 96
@@ -34,11 +36,11 @@ let matrix3 = new Uint8ClampedArray(ROWS * INST_SIDE * COLS * INST_SIDE * LOOP_D
 // let url = "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/footwork-model/model-matrix-LS.data"
 
 // TRAP
-let url = "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/trap_all_files.model/model-matrix-LS.data"
+let spaceURL = MODELS_LS_DATA['footwork']['space-url']
 
 
-async function getMatrix(url) {
-  return fetch(url).then(response => response.arrayBuffer())
+async function getMatrix(spaceURL) {
+  return fetch(spaceURL).then(response => response.arrayBuffer())
     .then(buffer => { 
       return new Float32Array(buffer, 0, buffer.byteLength / Float32Array.BYTES_PER_ELEMENT); 
     });
@@ -46,7 +48,7 @@ async function getMatrix(url) {
 
 
 ( async () => {
-  let LSMatrix = await getMatrix(url);
+  let LSMatrix = await getMatrix(spaceURL);
   // console.log(LSMatrix);
   
   let matrix2 = new Float32Array(ROWS * INST_SIDE * COLS * INST_SIDE * LOOP_DURATION) 
@@ -145,6 +147,9 @@ window.addEventListener("load", () => { visualize(0) }, false )
 //   }
 // }
 
-
+// 
+// 1. Arreglar la matriz, no crear todo cada vez, crear un array de 96 idata
+// 2. Crear funcion asincrónica
+// 3. TODO ver thresholds
 
 export { visualize }

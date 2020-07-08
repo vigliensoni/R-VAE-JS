@@ -4,6 +4,8 @@ import { drumOnsets } from "."
 import { isDrawing } from './canvas.js';
 import * as vis from "./visualization.js"
 import { LOOP_DURATION } from "./constants";
+import * as vae from './vae.js'
+import { MODELS_LS_DATA } from './constants.js'
 
 const playButton = document.getElementById('playButton')
 const clockUI = document.getElementById('clock')
@@ -37,7 +39,7 @@ let clock = new maxi.maxiClock()
 // control sequencer 
 const subdiv = 96 // 4 * 24 -> 1 beat
 const ticksperbeat = 24 // GV: why this is 12 and not 24?
-clock.setTempo(90)
+clock.setTempo(80) // Running at 160, though
 clock.setTicksPerBeat(ticksperbeat)
 
 // console.log('clock', clock)
@@ -209,6 +211,24 @@ function randomPattern () {
   }
   return rp
 }
+
+
+
+
+// function chooseModel(){
+//   let modelURL = MODELS_LS_DATA[this.value]['model-url']
+//   let spaceURL = MODELS_LS_DATA[this.value]['space-url']
+//   vae.loadModel(modelURL)
+//   console.log(modelURL, spaceURL)
+// }
+
+// document.getElementById("model").onchange = chooseModel
+
+
+
+
+
+
 
 playButton.addEventListener('click', () => playAudio())
 

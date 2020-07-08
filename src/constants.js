@@ -76,6 +76,19 @@ const MIDI_DRUM_MAP = {
   82: 8
 }
 
+const MODELS_LS_DATA = {
+  'footwork': {
+    "name": "footwork",
+    "model-url": "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/footwork-model/model.json", 
+    "space-url": "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/footwork-model/model-matrix-LS.data"
+  },
+  'trap': {
+    "name": "trap",
+    "model-url": "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/trap_all_files.model/model.json", 
+    "space-url": "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/trap_all_files.model/model-matrix-LS.data"
+  }
+}
+
 const NUM_DRUM_CLASSES = DRUM_CLASSES.length;
 const LOOP_DURATION = 96; // 2bars x 16th note
 
@@ -90,3 +103,5 @@ exports.NUM_DRUM_CLASSES = NUM_DRUM_CLASSES;
 exports.LOOP_DURATION = LOOP_DURATION;
 exports.ORIGINAL_DIM = ORIGINAL_DIM;
 exports.MIN_ONSETS_THRESHOLD = MIN_ONSETS_THRESHOLD;
+
+exports.MODELS_LS_DATA = MODELS_LS_DATA
