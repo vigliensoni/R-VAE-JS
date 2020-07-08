@@ -12,6 +12,11 @@ Play with R-VAE on the browser: https://vigliensoni.github.io/R-VAE-JS/
 
 ### Installation:
 
+To install packages:
+``` bash
+npm install
+```
+
 To create distribution
 
 ``` bash
