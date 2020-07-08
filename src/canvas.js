@@ -37,14 +37,14 @@ canvas.style.right = 0
 // }
 
 canvas.addEventListener('mousedown', e => {
-    // mouseX = e.offsetX
-    // mouseY = e.offsetY
+    mouseX = e.offsetX
+    mouseY = e.offsetY
     isDrawing = true
 })
 
 canvas.addEventListener('mousemove', e => {
     if (isDrawing === true) {
-        draw(colorFill="#00FF00")
+        // draw(colorFill="#00FF00")
         mouseX = e.offsetX
         mouseY = e.offsetY
     }
@@ -53,7 +53,7 @@ canvas.addEventListener('mousemove', e => {
 
 canvas.addEventListener('mouseup', e => {
     if (isDrawing === true) {
-        draw(colorFill="#FFFF00")
+        // draw(colorFill="#FFFF00")
         // mouseX = e.offsetX
         // mouseY = e.offsetY
         isDrawing = false
