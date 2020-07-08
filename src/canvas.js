@@ -10,14 +10,14 @@ let colorFill
 let canvasWidth;
 let canvasHeight;
 
-let canvas = document.getElementById("performanceCanvas");
+let canvas = document.getElementById("LSVisualizer");
 
 let context = canvas.getContext("2d");
 
 canvasWidth = window.innerWidth / 2;
 canvasHeight = window.innerHeight / 2;
 
-canvas.style.position = "fixed"
+canvas.style.position = "relative"
 
 canvas.setAttribute("height", canvasHeight);
 
@@ -61,20 +61,20 @@ canvas.addEventListener('mouseup', e => {
 })
 
 function draw(colorFill) {
-    console.log(mouseX, mouseY)
-    context.fillStyle = "#000000";
-    context.fillRect(0, 0, canvasWidth, canvasHeight);
-    context.strokeStyle = "#000000";
-    context.fillStyle = colorFill
-    context.beginPath();
-    context.arc(mouseX, mouseY, 20, 0, Math.PI*2, true);
-    context.closePath();
-    context.stroke();
-    context.fill();
+    // console.log(mouseX, mouseY)
+    // context.fillStyle = "#000000";
+    // context.fillRect(0, 0, canvasWidth, canvasHeight);
+    // context.strokeStyle = "#000000";
+    // context.fillStyle = colorFill
+    // context.beginPath();
+    // context.arc(mouseX, mouseY, 20, 0, Math.PI*2, true);
+    // context.closePath();
+    // context.stroke();
+    // context.fill();
 
     // requestAnimationFrame(draw)
 }
 
-requestAnimationFrame(draw);
+// requestAnimationFrame(draw);
 
 export { isDrawing }

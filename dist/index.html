@@ -10,13 +10,14 @@
  <link rel="stylesheet" href="./styleCSS.css" />
 </head>
 <body>
-  <canvas id="performanceCanvas"></canvas>
+  <!-- <canvas id="performanceCanvas"></canvas> -->
   <div>
     <div id="title">R-VAE</div>
     <div id="subtitle">Rhythmic explorations of latent spaces</div>
     <div id="section">Easy exploration of latent spaces</div>
     <div id="section">learned from a dataset of rhythms using a VAE</div>
-
+    <br>
+    <canvas id="LSVisualizer"></canvas>
 
     
   <div><button id="playButton">Play</button></div>
@@ -29,6 +30,12 @@
   <button id="kickPatternbutton">Kick - Q</button>
   <button id="snarePatternbutton">Snare - W</button>
   <button id="hihatPatternbutton">Hihat - E</button>
+  <!-- <label for="model">Choose a model:</label>
+    <select name="model" id="model">
+      <option value="footwork">Footwork</option>
+      <option value="trap">Trap</option>
+    </select> -->
+    <!-- <p><span id="changed"></span></p> -->
 </div>
 
 <div id="knobs">
@@ -45,6 +52,15 @@
   <div id="section">5. Increase the Noise to add variability to the position of the playback head</div>
   <div id="section">6. Mute individuals instruments by pressing Q, W, or E</div>
 </div>
+
+<!-- <canvas id="imgtest"></canvas>
+<canvas id="imgtestscaled"></canvas>
+
+<canvas id="visualization"></canvas> -->
+
+<!-- <div>
+  <button id="timetag">Time</button>
+</div> -->
 
 </body>
 <!-- <script src="app.js"></script> -->
