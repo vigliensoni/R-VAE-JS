@@ -141,9 +141,9 @@ const playAudio = () => {
       }
     }
     
-    w = kick.playOnce() 
-    w += snare.playOnce()
-    w += hihat.playOnce() * 0.25
+    w = kick.playOnce() * 0.25
+    w += snare.playOnce() * 0.33
+    w += hihat.playOnce() * 0.125
     return w
   }
 }
