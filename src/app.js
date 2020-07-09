@@ -124,19 +124,19 @@ const playAudio = () => {
       if (kkPat.indexOf(tickCounter) >= 0) {
         if (kkMuted !== true) {
           kick.trigger()
-          if (webmidi) WebMidi.outputs[1].playNote("C1") // WebMidi only working on Firefox
+          if (webmidi) WebMidi.outputs[0].playNote("C1") // WebMidi only working on Firefox
         }
       }
       if (snPat.indexOf(tickCounter) >= 0) {
         if (snMuted !== true) {
           snare.trigger()
-          if (webmidi) WebMidi.outputs[1].playNote("A1")
+          if (webmidi) WebMidi.outputs[0].playNote("A1")
         }
       }
       if (hhPat.indexOf(tickCounter) >= 0) {
         if (hhMuted !== true) {
           hihat.trigger()
-          if (webmidi) WebMidi.outputs[1].playNote("G#1")
+          if (webmidi) WebMidi.outputs[0].playNote("G#1")
         }
       }
     }
