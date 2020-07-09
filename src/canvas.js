@@ -1,31 +1,31 @@
 // THIS FILE MAKES THE CANVAS PERFORMANCE SPACE
 
-import { kkMuted } from "./app.js"
+// import { kkMuted } from "./app.js"
 
 let mouseX;
 let mouseY;
 let isDrawing
-let colorFill
+// let colorFill
 
-let canvasWidth;
-let canvasHeight;
+// let canvasWidth;
+// let canvasHeight;
 
 let canvas = document.getElementById("LSVisualizer");
 
-let context = canvas.getContext("2d");
+// let context = canvas.getContext("2d");
 
-canvasWidth = window.innerWidth / 2;
-canvasHeight = window.innerHeight / 2;
+// canvasWidth = window.innerWidth / 2;
+// canvasHeight = window.innerHeight / 2;
 
-canvas.style.position = "relative"
+// canvas.style.position = "relative"
 
-canvas.setAttribute("height", canvasHeight);
+// canvas.setAttribute("height", canvasHeight);
 
-canvas.width = canvasWidth;
-canvas.height = canvasHeight;
+// canvas.width = canvasWidth;
+// canvas.height = canvasHeight;
 
-canvas.style.top = 0
-canvas.style.right = 0
+// canvas.style.top = 0
+// canvas.style.right = 0
 
 
 // canvas.addEventListener('mousemove', getMouse, false);
