@@ -124,7 +124,7 @@ const playAudio = () => {
       if (kkPat.indexOf(tickCounter) >= 0) {
         if (kkMuted !== true) {
           kick.trigger()
-          if (webmidi) WebMidi.outputs[0].playNote("C1") // WebMidi only working on Firefox
+          if (webmidi) WebMidi.outputs[0].playNote("C1") // WebMidi not working on Firefox
         }
       }
       if (snPat.indexOf(tickCounter) >= 0) {
