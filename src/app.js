@@ -13,13 +13,17 @@ const kickPatternbutton = document.getElementById('kickPatternbutton')
 const snarePatternbutton = document.getElementById('snarePatternbutton')
 const hihatPatternbutton = document.getElementById('hihatPatternbutton')
 
+let webmidi
+
 // load WebMIDI
 WebMidi.enable(function (err) {
   if (err) {
     console.log("WebMidi could not be enabled.", err)
+    webmidi = false;
   } else {
     console.log("WebMidi enabled!")
     console.log("WebMidi Outputs: ", WebMidi.outputs)
+    webmidi = true;
   }
 });
 
@@ -120,19 +124,19 @@ const playAudio = () => {
       if (kkPat.indexOf(tickCounter) >= 0) {
         if (kkMuted !== true) {
           kick.trigger()
-          WebMidi.outputs[1].playNote("C1")
+          if (webmidi) WebMidi.outputs[1].playNote("C1") // WebMidi only working on Firefox
         }
       }
       if (snPat.indexOf(tickCounter) >= 0) {
         if (snMuted !== true) {
           snare.trigger()
-          WebMidi.outputs[1].playNote("A1")
+          if (webmidi) WebMidi.outputs[1].playNote("A1")
         }
       }
       if (hhPat.indexOf(tickCounter) >= 0) {
         if (hhMuted !== true) {
           hihat.trigger()
-          WebMidi.outputs[1].playNote("G#1")
+          if (webmidi) WebMidi.outputs[1].playNote("G#1")
         }
       }
     }
