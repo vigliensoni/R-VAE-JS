@@ -88,21 +88,11 @@ const playAudio = () => {
   maxiEngine.init()
   
   // maxiEngine.loadSample('./audio/Kick 606 1.wav', kick)
-  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%20606%201.wav", kick)
-
+  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%20606%201.wav", kick);
   // maxiEngine.loadSample('./audio/Rim 7T8.wav', snare)
-  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Rim%207T8.wav", snare)
-
+  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Rim%207T8.wav", snare);
   // maxiEngine.loadSample('./audio/ClosedHH 1.wav', hihat)
-  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%201.wav", hihat)
-
-  // show an oscilloscope and freqscope
-  // Nexus.context = maxiEngine.context
-  // const oscilloscope = new Nexus.Oscilloscope('oscilloscope', { size: [400, 100] }).connect(maxiEngine.maxiAudioProcessor)
-  // const spectrogram = new Nexus.Spectrogram('spectrogram', { size: [400, 100] }).connect(maxiEngine.maxiAudioProcessor)
-  
- 
-  
+  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%201.wav", hihat);
 
   maxiEngine.play = function () {
     var w = 0
@@ -112,14 +102,8 @@ const playAudio = () => {
       let tickCounter = clock.playHead % subdiv
       const beatCounter = Math.floor(clock.playHead / subdiv)
       clockUI.innerHTML = (beatCounter + 1) + ' ' + Math.floor(tickCounter / ticksperbeat + 1) + ' ' + (tickCounter % ticksperbeat + 1) 
-      
-      // CHECK HOW TO CHANGE DATASTRUCTURE TO MATCH RVAE
-      // if ( drumOnsets[0] ) {
-      //   kick.trigger()
-      // }
-      
+            
       vis.visualize(clock.playHead % LOOP_DURATION)
-      // vis.visualize(subdiv)
 
       if (kkPat.indexOf(tickCounter) >= 0) {
         if (kkMuted !== true) {
