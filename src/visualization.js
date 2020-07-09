@@ -116,22 +116,23 @@ async function getMatrix(spaceURL) {
 
 
 let visualizerContext;
+let idata;
+// INITIALIZE VISUALIZER CANVAS
 function initializeCanvas() {
   let canvas = document.getElementById("LSVisualizer")
   canvas.width = width
   canvas.height = height
   visualizerContext = canvas.getContext('2d')
+  idata = visualizerContext.createImageData(width, height)
 }
 
-let idata;
-// VISUALIZE MATRIX
-function visualize(t) {
-  let from = width * height * 4 * (t)
-  let to = width * height * 4 * (t + 1)
-  idata = visualizerContext.createImageData(width, height)
-  idata.data.set(matrix3.slice(from, to))
-  visualizerContext.putImageData(idata,0,0)
 
+// FILL THE MATRIX
+function visualize(t) {
+  // let from = width * height * 4 * (t)
+  // let to = width * height * 4 * (t + 1)
+  idata.data.set(matrix3.slice(width * height * 4 * (t), width * height * 4 * (t + 1)))
+  visualizerContext.putImageData(idata,0,0)
 }
 
 // let timetag = document.getElementById("timetag")
