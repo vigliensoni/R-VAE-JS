@@ -28,13 +28,13 @@ const NUM_MIN_MIDI_FILES = 64;
 import * as utils from './utils.js';
 import * as vae from './vae.js';
 
-
-// CANVAS
-import * as canvasDef from './canvas.js';
-
 // DRUM SAMPLE RANDOM SEQUENCER
 import * as sequencerApp from './app.js';
 // sequencerApp.playAudio()
+
+// Canvas
+import { canvas } from './canvas.js';
+
 
 // This will be printed directly to the Max console
 // Max.post(`Loaded the ${path.basename(__filename)} script`);
@@ -308,14 +308,7 @@ async function generatePattern(z1, z2, threshold, noise_range){
 
 
 
-
-
-let canvas = document.getElementById("LSVisualizer");
 canvas.addEventListener('mousemove', getMouse, false);
-
-// let [x, y] = canvasDef.getMouse;
-// console.log(x,y);
-
 
 function getMouse (mousePosition) {
     let mouseX = mousePosition.layerX

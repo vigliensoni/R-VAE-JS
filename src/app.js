@@ -1,7 +1,7 @@
 // THIS FILE CREATES CONTROLS THE AUDIO CLOCK AND SAMPLES
 
 import { drumOnsets } from "."
-import { isDrawing } from './canvas.js';
+import { canvas, isDrawing } from './canvas.js';
 import * as vis from "./visualization.js"
 import { LOOP_DURATION } from "./constants";
 import * as vae from './vae.js'
@@ -15,7 +15,7 @@ const hihatPatternbutton = document.getElementById('hihatPatternbutton')
 
 let webmidi
 
-// load WebMIDI
+// loading WebMIDI
 WebMidi.enable(function (err) {
   if (err) {
     console.log("WebMidi could not be enabled.", err)
@@ -160,7 +160,6 @@ noise.on('change', function(n) {
 })
 
 
-let canvas = document.getElementById("LSVisualizer");
 
 // Retrieve patterns from latent space when mouse moves and drags (drawing)
 canvas.addEventListener('mousemove', event => {

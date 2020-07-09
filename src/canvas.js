@@ -13,4 +13,4 @@ canvas.addEventListener('mouseup', e => {
     }
 });
 
-export { isDrawing }
+export { canvas, isDrawing }
