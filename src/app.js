@@ -1,11 +1,12 @@
 // THIS FILE CREATES CONTROLS THE AUDIO CLOCK AND SAMPLES
 
-import { drumOnsets } from "."
+import { kkPat, snPat, hhPat } from "."
 import { canvas, isDrawing } from './canvas.js';
 import * as vis from "./visualization.js"
 import { LOOP_DURATION } from "./constants";
 import * as vae from './vae.js'
 import { MODELS_LS_DATA } from './constants.js'
+
 
 const playButton = document.getElementById('playButton')
 const clockUI = document.getElementById('clock')
@@ -73,9 +74,6 @@ const noise = new Nexus.Dial('#noiseDial', {
 // console.log(threshold)
 
 // INIT PATTERNS
-var kkPat = []
-var snPat = []
-var hhPat = []
 let kkMuted 
 let snMuted
 let hhMuted
@@ -146,13 +144,13 @@ noise.on('change', function(n) {
 
 
 // Retrieve patterns from latent space when mouse moves and drags (drawing)
-canvas.addEventListener('mousemove', event => {
-  if (isDrawing) {
-    kkPat = drumOnsets[0]
-    snPat = drumOnsets[1]
-    hhPat = drumOnsets[2]
-  }
-})
+// canvas.addEventListener('mousemove', event => {
+//   if (isDrawing) {
+//     kkPat = drumOnsets[0]
+//     snPat = drumOnsets[1]
+//     hhPat = drumOnsets[2]
+//   }
+// })
 
 
 

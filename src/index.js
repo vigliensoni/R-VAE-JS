@@ -33,7 +33,7 @@ import * as sequencerApp from './app.js';
 // sequencerApp.playAudio()
 
 // Canvas
-import { canvas } from './canvas.js';
+import { canvas, isDrawing, mouseX, mouseY } from './canvas.js';
 
 
 // This will be printed directly to the Max console
@@ -306,24 +306,29 @@ async function generatePattern(z1, z2, threshold, noise_range){
 //   }
 // }
 
+var kkPat = []
+var snPat = []
+var hhPat = []
+// RETRIEVE DATA FROM LATENT SPACE
 
+const normalize = (x, max, scaleToMax) => (x/max - 0.5) * 2 * scaleToMax
+function getMouse () {
 
-canvas.addEventListener('mousemove', getMouse, false);
-
-function getMouse (mousePosition) {
-    let mouseX = mousePosition.layerX
-    let mouseY = mousePosition.layerY
+    // let mouseX = mousePosition.layerX
+    // let mouseY = mousePosition.layerY
+    // console.log(mouseX, mouseY);
     // console.log(mouseX, mouseY)
-    let normalize = (x, max, scaleToMax) => (x/max - 0.5) * 2 * scaleToMax
     generate(normalize(mouseX, canvas.width, 3), 
             normalize(mouseY, canvas.height, 3), 
             sequencerApp.thresholdValue, 
             sequencerApp.noiseValue)
+    kkPat = drumOnsets[0]
+    snPat = drumOnsets[1]
+    hhPat = drumOnsets[2]        
 
 }
 
-export { drumOnsets } 
+
+export { getMouse, kkPat, snPat, hhPat } 
 
 
-// canvas.width => +3
-// 
