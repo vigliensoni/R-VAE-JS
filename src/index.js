@@ -3,15 +3,15 @@
 
 import _ from 'lodash';
 
-import * as path from 'path';
+// import * as path from 'path';
 // import * as Max from 'max-api';
 import * as fs from 'fs';
-import * as glob from 'glob';
+// import * as glob from 'glob';
 import * as tf from '@tensorflow/tfjs';
 import { Midi } from '@tonejs/midi';
 // import * as UI from '@tonejs/ui';
 // import * as webcomponents from '@webcomponents/webcomponentsjs';
-import * as Tone from "tone";
+// import * as Tone from "tone";
 
 
 // Constants
@@ -30,7 +30,7 @@ import * as vae from './vae.js';
 
 
 // CANVAS
-import * as canvasDef from './canvas.js';
+import { canvas } from './canvas.js';
 
 // DRUM SAMPLE RANDOM SEQUENCER
 import * as sequencerApp from './app.js';
@@ -309,28 +309,23 @@ async function generatePattern(z1, z2, threshold, noise_range){
 
 
 
-
-let canvas = document.getElementById("LSVisualizer");
-canvas.addEventListener('mousemove', getMouse, false);
-
-// let [x, y] = canvasDef.getMouse;
-// console.log(x,y);
-
+// Get throttled mouse position 
+let enableCall = true;
+canvas.addEventListener('mousemove', e => {
+    if(!enableCall) return;
+    enableCall = false;
+    getMouse(e);
+    setTimeout(() => enableCall = true, 300);
+})
 
 function getMouse (mousePosition) {
-    let mouseX = mousePosition.layerX
-    let mouseY = mousePosition.layerY
-    // console.log(mouseX, mouseY)
-    let normalize = (x, max, scaleToMax) => (x/max - 0.5) * 2 * scaleToMax
+    let mouseX = mousePosition.layerX;
+    let mouseY = mousePosition.layerY;
+    let normalize = (x, max, scaleToMax) => (x/max - 0.5) * 2 * scaleToMax;
     generate(normalize(mouseX, canvas.width, 3), 
             normalize(mouseY, canvas.height, 3), 
             sequencerApp.thresholdValue, 
-            sequencerApp.noiseValue)
-
+            sequencerApp.noiseValue);
 }
 
 export { drumOnsets } 
-
-
-// canvas.width => +3
-// 

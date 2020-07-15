@@ -77,4 +77,4 @@ function draw(colorFill) {
 
 // requestAnimationFrame(draw);
 
-export { isDrawing }
+export { isDrawing, canvas }
