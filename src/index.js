@@ -28,13 +28,13 @@ const NUM_MIN_MIDI_FILES = 64;
 import * as utils from './utils.js';
 import * as vae from './vae.js';
 
-
-// CANVAS
-import * as canvasDef from './canvas.js';
-
 // DRUM SAMPLE RANDOM SEQUENCER
 import * as sequencerApp from './app.js';
 // sequencerApp.playAudio()
+
+// Canvas
+import { canvas, isDrawing, mouseX, mouseY } from './canvas.js';
+
 
 // This will be printed directly to the Max console
 // Max.post(`Loaded the ${path.basename(__filename)} script`);
@@ -306,31 +306,29 @@ async function generatePattern(z1, z2, threshold, noise_range){
 //   }
 // }
 
+var kkPat = []
+var snPat = []
+var hhPat = []
+// RETRIEVE DATA FROM LATENT SPACE
 
+const normalize = (x, max, scaleToMax) => (x/max - 0.5) * 2 * scaleToMax
+function getMouse () {
 
-
-
-let canvas = document.getElementById("LSVisualizer");
-canvas.addEventListener('mousemove', getMouse, false);
-
-// let [x, y] = canvasDef.getMouse;
-// console.log(x,y);
-
-
-function getMouse (mousePosition) {
-    let mouseX = mousePosition.layerX
-    let mouseY = mousePosition.layerY
+    // let mouseX = mousePosition.layerX
+    // let mouseY = mousePosition.layerY
+    // console.log(mouseX, mouseY);
     // console.log(mouseX, mouseY)
-    let normalize = (x, max, scaleToMax) => (x/max - 0.5) * 2 * scaleToMax
     generate(normalize(mouseX, canvas.width, 3), 
             normalize(mouseY, canvas.height, 3), 
             sequencerApp.thresholdValue, 
             sequencerApp.noiseValue)
+    kkPat = drumOnsets[0]
+    snPat = drumOnsets[1]
+    hhPat = drumOnsets[2]        
 
 }
 
-export { drumOnsets } 
+
+export { getMouse, kkPat, snPat, hhPat } 
 
 
-// canvas.width => +3
-// 

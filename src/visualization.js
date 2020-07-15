@@ -6,7 +6,8 @@ const LOOP_DURATION = 96
 const NUM_DRUM_CLASSES = 9
 const INST_SIDE = Math.sqrt(NUM_DRUM_CLASSES) // 3 - SIDE OF THE INSTRUMENT CUBE
 const Px = 10
-
+const height = ROWS * INST_SIDE * Px
+const width = COLS * INST_SIDE * Px
 
 // CREATING AN LS MATRIX
 // one onset for each instrument at t = 0
@@ -113,31 +114,31 @@ async function getMatrix(spaceURL) {
 
 })();
 
-let time = 0
-// VISUALIZE MATRIX
-function visualize(t) {
 
+let visualizerContext;
+let idata;
+// INITIALIZE VISUALIZER CANVAS
+function initializeCanvas() {
   let canvas = document.getElementById("LSVisualizer")
-  let ctx = canvas.getContext('2d')
-  const height = ROWS * INST_SIDE * Px
-  const width = COLS * INST_SIDE * Px
   canvas.width = width
   canvas.height = height
+  visualizerContext = canvas.getContext('2d')
+  idata = visualizerContext.createImageData(width, height)
+}
 
-  let from = width * height * 4 * (t)
-  let to = width * height * 4 * (t + 1)
-  let idata = ctx.createImageData(width, height)
-  idata.data.set(matrix3.slice(from, to))
-  ctx.putImageData(idata,0,0)
 
-  // timetag.innerText = "t:" + t + " f:" + from + " t:" + (to-1)
-  time++
+// FILL THE MATRIX
+function visualize(t) {
+  // let from = width * height * 4 * (t)
+  // let to = width * height * 4 * (t + 1)
+  idata.data.set(matrix3.slice(width * height * 4 * (t), width * height * 4 * (t + 1)))
+  visualizerContext.putImageData(idata,0,0)
 }
 
 // let timetag = document.getElementById("timetag")
 
 // visualize(time)
-window.addEventListener("load", () => { visualize(0) }, false )
+window.addEventListener("load", () => { initializeCanvas() }, false )
 // timetag.addEventListener("click", () => { visualize(time) }, false )
 
 // while (true) {
