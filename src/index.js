@@ -306,27 +306,38 @@ async function generatePattern(z1, z2, threshold, noise_range){
 //   }
 // }
 
+
+// RETRIEVE DATA FROM LATENT SPACE
+
+// Get throttled mouse position 
+let enableCall = true;
+canvas.addEventListener('mousemove', e => {
+    if(!enableCall) return;
+    enableCall = false;
+    if (isDrawing === true) {
+    getMouse(e);
+    setTimeout(() => enableCall = true, 300);
+    }
+})
+
 var kkPat = []
 var snPat = []
 var hhPat = []
-// RETRIEVE DATA FROM LATENT SPACE
-
-const normalize = (x, max, scaleToMax) => (x/max - 0.5) * 2 * scaleToMax
-function getMouse () {
-
-    // let mouseX = mousePosition.layerX
-    // let mouseY = mousePosition.layerY
-    // console.log(mouseX, mouseY);
-    // console.log(mouseX, mouseY)
+// let mouseX;
+// let mouseY;
+const normalize = (x, max, scaleToMax) => (x/max - 0.5) * 2 * scaleToMax;
+function getMouse (mousePosition) {
+    let mouseX = mousePosition.layerX;
+    let mouseY = mousePosition.layerY;
     generate(normalize(mouseX, canvas.width, 3), 
             normalize(mouseY, canvas.height, 3), 
             sequencerApp.thresholdValue, 
-            sequencerApp.noiseValue)
-    kkPat = drumOnsets[0]
-    snPat = drumOnsets[1]
-    hhPat = drumOnsets[2]        
-
+            sequencerApp.noiseValue);
+    kkPat = drumOnsets[0];
+    snPat = drumOnsets[1];
+    hhPat = drumOnsets[2];
 }
+
 
 
 export { getMouse, kkPat, snPat, hhPat } 
