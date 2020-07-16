@@ -3,20 +3,20 @@
 
 import _ from 'lodash';
 
-import * as path from 'path';
+// import * as path from 'path';
 // import * as Max from 'max-api';
 import * as fs from 'fs';
-import * as glob from 'glob';
+// import * as glob from 'glob';
 import * as tf from '@tensorflow/tfjs';
 import { Midi } from '@tonejs/midi';
 // import * as UI from '@tonejs/ui';
 // import * as webcomponents from '@webcomponents/webcomponentsjs';
-import * as Tone from "tone";
+// import * as Tone from "tone";
 
 
 // Constants
 import { MIDI_DRUM_MAP } from './constants.js';
-import { DRUM_CLASSES } from './constants.js';
+// import { DRUM_CLASSES } from './constants.js';
 import { NUM_DRUM_CLASSES } from './constants.js';
 import { LOOP_DURATION } from './constants.js';
 import { MIN_ONSETS_THRESHOLD } from './constants.js';
@@ -33,7 +33,7 @@ import * as sequencerApp from './app.js';
 // sequencerApp.playAudio()
 
 // Canvas
-import { canvas, isDrawing, mouseX, mouseY } from './canvas.js';
+import { mouseX, mouseY } from './canvas.js';
 
 
 // This will be printed directly to the Max console
@@ -308,29 +308,13 @@ async function generatePattern(z1, z2, threshold, noise_range){
 
 
 // RETRIEVE DATA FROM LATENT SPACE
-
-// Get throttled mouse position 
-let enableCall = true;
-canvas.addEventListener('mousemove', e => {
-    if(!enableCall) return;
-    enableCall = false;
-    if (isDrawing === true) {
-    getMouse(e);
-    setTimeout(() => enableCall = true, 300);
-    }
-})
-
 var kkPat = []
 var snPat = []
 var hhPat = []
-// let mouseX;
-// let mouseY;
-const normalize = (x, max, scaleToMax) => (x/max - 0.5) * 2 * scaleToMax;
-function getMouse (mousePosition) {
-    let mouseX = mousePosition.layerX;
-    let mouseY = mousePosition.layerY;
-    generate(normalize(mouseX, canvas.width, 3), 
-            normalize(mouseY, canvas.height, 3), 
+
+function latspaceRetriever (mouseX, mouseY) {
+    generate(mouseX, 
+            mouseY,
             sequencerApp.thresholdValue, 
             sequencerApp.noiseValue);
     kkPat = drumOnsets[0];
@@ -338,8 +322,6 @@ function getMouse (mousePosition) {
     hhPat = drumOnsets[2];
 }
 
-
-
-export { getMouse, kkPat, snPat, hhPat } 
+export { latspaceRetriever, kkPat, snPat, hhPat } 
 
 
