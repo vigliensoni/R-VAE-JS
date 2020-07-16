@@ -1,11 +1,11 @@
 // THIS FILE CREATES CONTROLS THE AUDIO CLOCK AND SAMPLES
 
 import { kkPat, snPat, hhPat } from "."
-import { canvas, isDrawing } from './canvas.js';
+// import { canvas, isDrawing } from './canvas.js';
 import * as vis from "./visualization.js"
-import { LOOP_DURATION } from "./constants";
-import * as vae from './vae.js'
-import { MODELS_LS_DATA } from './constants.js'
+// import { LOOP_DURATION } from "./constants";
+// import * as vae from './vae.js'
+// import { MODELS_LS_DATA } from './constants.js'
 
 
 const playButton = document.getElementById('playButton')
@@ -93,10 +93,9 @@ const playAudio = () => {
   maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%201.wav", hihat);
   
   let w = 0;
+  let tickCounter;
+  let beatCounter;
   maxiEngine.play = function () {
-    
-    let tickCounter;
-    let beatCounter;
     clock.ticker();
     if (clock.isTick()) {
       // let beatCounter = clock.playHead % 7;
@@ -155,17 +154,6 @@ noise.on('change', function(n) {
 
 
 
-// Retrieve patterns from latent space when mouse moves and drags (drawing)
-// canvas.addEventListener('mousemove', event => {
-//   if (isDrawing) {
-//     kkPat = drumOnsets[0]
-//     snPat = drumOnsets[1]
-//     hhPat = drumOnsets[2]
-//   }
-// })
-
-
-
 // button listeners
 
 
@@ -186,13 +174,13 @@ window.addEventListener("keydown", event => {
 window.addEventListener("keyup", event => {
   if (event.key == "q") {
     kkMuted = false
-    kickPatternbutton.style.background="#FFFFFF"
+    kickPatternbutton.style.background="#000000"
   } else if (event.key == "w") {
     snMuted = false
-    snarePatternbutton.style.background="#FFFFFF"
+    snarePatternbutton.style.background="#000000"
   } else if (event.key == "e") {
     hhMuted = false
-    hihatPatternbutton.style.background="#FFFFFF"
+    hihatPatternbutton.style.background="#000000"
   }
 })
 
