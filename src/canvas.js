@@ -46,10 +46,4 @@ function getMouse(e) {
     console.log(mouseX, mouseY)
 }
 
-<<<<<<< HEAD
 export { mouseX, mouseY }
-=======
-// requestAnimationFrame(draw);
-
-export { isDrawing, canvas }
->>>>>>> master

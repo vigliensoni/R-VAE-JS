@@ -126,14 +126,10 @@ const playAudio = () => {
       if ((hhPat.indexOf(tickCounter) >= 0)) {
         if ((hhMuted !== true)) {
           hihat.trigger()
-<<<<<<< HEAD
           if (webmidi) { 
             WebMidi.outputs[0].playNote("G#1");
             WebMidi.outputs[1].playNote("G#1");
           }
-=======
-          WebMidi.outputs[1].playNote("F#1")
->>>>>>> master
         }
       }
     }

@@ -28,13 +28,6 @@ const NUM_MIN_MIDI_FILES = 64;
 import * as utils from './utils.js';
 import * as vae from './vae.js';
 
-<<<<<<< HEAD
-=======
-
-// CANVAS
-import { canvas } from './canvas.js';
-
->>>>>>> master
 // DRUM SAMPLE RANDOM SEQUENCER
 import * as sequencerApp from './app.js';
 // sequencerApp.playAudio()
@@ -319,7 +312,6 @@ var kkPat = []
 var snPat = []
 var hhPat = []
 
-<<<<<<< HEAD
 function latspaceRetriever (mouseX, mouseY) {
     generate(mouseX, 
             mouseY,
@@ -333,26 +325,3 @@ function latspaceRetriever (mouseX, mouseY) {
 export { latspaceRetriever, kkPat, snPat, hhPat } 
 
 
-=======
-
-// Get throttled mouse position 
-let enableCall = true;
-canvas.addEventListener('mousemove', e => {
-    if(!enableCall) return;
-    enableCall = false;
-    getMouse(e);
-    setTimeout(() => enableCall = true, 300);
-})
-
-function getMouse (mousePosition) {
-    let mouseX = mousePosition.layerX;
-    let mouseY = mousePosition.layerY;
-    let normalize = (x, max, scaleToMax) => (x/max - 0.5) * 2 * scaleToMax;
-    generate(normalize(mouseX, canvas.width, 3), 
-            normalize(mouseY, canvas.height, 3), 
-            sequencerApp.thresholdValue, 
-            sequencerApp.noiseValue);
-}
-
-export { drumOnsets } 
->>>>>>> master
