@@ -1,80 +1,55 @@
 // THIS FILE MAKES THE CANVAS PERFORMANCE SPACE
 
-import { kkMuted } from "./app.js"
+import { latspaceRetriever } from '.';
 
+
+let isDrawing;
 let mouseX;
 let mouseY;
-let isDrawing
-let colorFill
-
-let canvasWidth;
-let canvasHeight;
-
 let canvas = document.getElementById("LSVisualizer");
-
-let context = canvas.getContext("2d");
-
-canvasWidth = window.innerWidth / 2;
-canvasHeight = window.innerHeight / 2;
-
-canvas.style.position = "relative"
-
-canvas.setAttribute("height", canvasHeight);
-
-canvas.width = canvasWidth;
-canvas.height = canvasHeight;
-
-canvas.style.top = 0
-canvas.style.right = 0
+let cRect = canvas.getBoundingClientRect();
+let enableCall = true;
+const normalize = (x, max, scaleToMax) => (x/max - 0.5) * 2 * scaleToMax;
 
 
-// canvas.addEventListener('mousemove', getMouse, false);
-
-// function getMouse (mousePosition) {
-//     mouseX = mousePosition.layerX;
-//     mouseY = mousePosition.layerY;
-//     // console.log(mouseX/canvas.width, mouseY/canvas.height);
-// }
 
 canvas.addEventListener('mousedown', e => {
-    // mouseX = e.offsetX
-    // mouseY = e.offsetY
-    isDrawing = true
-})
-
-canvas.addEventListener('mousemove', e => {
-    if (isDrawing === true) {
-        draw(colorFill="#00FF00")
-        mouseX = e.offsetX
-        mouseY = e.offsetY
-    }
-
-})
+    if(!enableCall) return;
+    isDrawing = true;
+    enableCall = false;
+    getMouse(e);
+    setTimeout(() => enableCall = true, 300);
+});
 
 canvas.addEventListener('mouseup', e => {
     if (isDrawing === true) {
-        draw(colorFill="#FFFF00")
-        // mouseX = e.offsetX
-        // mouseY = e.offsetY
-        isDrawing = false
+        isDrawing = false;
     }
-})
+});
 
-function draw(colorFill) {
-    // console.log(mouseX, mouseY)
-    // context.fillStyle = "#000000";
-    // context.fillRect(0, 0, canvasWidth, canvasHeight);
-    // context.strokeStyle = "#000000";
-    // context.fillStyle = colorFill
-    // context.beginPath();
-    // context.arc(mouseX, mouseY, 20, 0, Math.PI*2, true);
-    // context.closePath();
-    // context.stroke();
-    // context.fill();
+canvas.addEventListener('mousemove', e => {
+    if(!enableCall) return;
+    if (isDrawing === true) {
+        enableCall = false;
+        getMouse(e);
+        latspaceRetriever(mouseX, mouseY);
+        setTimeout(() => enableCall = true, 300);
+    }
+});
 
-    // requestAnimationFrame(draw)
+function getMouse(e) {
+    // Implement this approach later for better compatibility
+    // let mouseX = Math.round(e.clientX - cRect.left);
+    // let mouseY = Math.round(e.clientY - cRect.top);  
+    mouseX = normalize(e.layerX, canvas.width, 3);
+    mouseY = normalize(e.layerY, canvas.width, 3);
+    console.log(mouseX, mouseY)
 }
 
+<<<<<<< HEAD
+export { mouseX, mouseY }
+=======
 // requestAnimationFrame(draw);
 
 export { isDrawing, canvas }
+>>>>>>> master

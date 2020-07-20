@@ -16,7 +16,7 @@ import { Midi } from '@tonejs/midi';
 
 // Constants
 import { MIDI_DRUM_MAP } from './constants.js';
-import { DRUM_CLASSES } from './constants.js';
+// import { DRUM_CLASSES } from './constants.js';
 import { NUM_DRUM_CLASSES } from './constants.js';
 import { LOOP_DURATION } from './constants.js';
 import { MIN_ONSETS_THRESHOLD } from './constants.js';
@@ -28,13 +28,20 @@ const NUM_MIN_MIDI_FILES = 64;
 import * as utils from './utils.js';
 import * as vae from './vae.js';
 
+<<<<<<< HEAD
+=======
 
 // CANVAS
 import { canvas } from './canvas.js';
 
+>>>>>>> master
 // DRUM SAMPLE RANDOM SEQUENCER
 import * as sequencerApp from './app.js';
 // sequencerApp.playAudio()
+
+// Canvas
+import { mouseX, mouseY } from './canvas.js';
+
 
 // This will be printed directly to the Max console
 // Max.post(`Loaded the ${path.basename(__filename)} script`);
@@ -307,7 +314,26 @@ async function generatePattern(z1, z2, threshold, noise_range){
 // }
 
 
+// RETRIEVE DATA FROM LATENT SPACE
+var kkPat = []
+var snPat = []
+var hhPat = []
 
+<<<<<<< HEAD
+function latspaceRetriever (mouseX, mouseY) {
+    generate(mouseX, 
+            mouseY,
+            sequencerApp.thresholdValue, 
+            sequencerApp.noiseValue);
+    kkPat = drumOnsets[0];
+    snPat = drumOnsets[1];
+    hhPat = drumOnsets[2];
+}
+
+export { latspaceRetriever, kkPat, snPat, hhPat } 
+
+
+=======
 
 // Get throttled mouse position 
 let enableCall = true;
@@ -329,3 +355,4 @@ function getMouse (mousePosition) {
 }
 
 export { drumOnsets } 
+>>>>>>> master

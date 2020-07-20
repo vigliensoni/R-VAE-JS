@@ -1,11 +1,12 @@
 // THIS FILE CREATES CONTROLS THE AUDIO CLOCK AND SAMPLES
 
-import { drumOnsets } from "."
-import { isDrawing } from './canvas.js';
+import { kkPat, snPat, hhPat } from "."
+// import { canvas, isDrawing } from './canvas.js';
 import * as vis from "./visualization.js"
-import { LOOP_DURATION } from "./constants";
-import * as vae from './vae.js'
-import { MODELS_LS_DATA } from './constants.js'
+// import { LOOP_DURATION } from "./constants";
+// import * as vae from './vae.js'
+// import { MODELS_LS_DATA } from './constants.js'
+
 
 const playButton = document.getElementById('playButton')
 const clockUI = document.getElementById('clock')
@@ -13,13 +14,17 @@ const kickPatternbutton = document.getElementById('kickPatternbutton')
 const snarePatternbutton = document.getElementById('snarePatternbutton')
 const hihatPatternbutton = document.getElementById('hihatPatternbutton')
 
-// load WebMIDI
+let webmidi
+
+// loading WebMIDI
 WebMidi.enable(function (err) {
   if (err) {
     console.log("WebMidi could not be enabled.", err)
+    webmidi = false;
   } else {
     console.log("WebMidi enabled!")
     console.log("WebMidi Outputs: ", WebMidi.outputs)
+    webmidi = true;
   }
 });
 
@@ -38,8 +43,8 @@ let clock = new maxi.maxiClock()
 
 // control sequencer 
 const subdiv = 96 // 4 * 24 -> 1 beat
-const ticksperbeat = 24 // GV: why this is 12 and not 24?
-clock.setTempo(80) // Running at 160, though
+const ticksperbeat = 12 // GV: why this is 12 and not 24?
+clock.setTempo(160) // Running at 160, though
 clock.setTicksPerBeat(ticksperbeat)
 
 // console.log('clock', clock)
@@ -69,9 +74,6 @@ const noise = new Nexus.Dial('#noiseDial', {
 // console.log(threshold)
 
 // INIT PATTERNS
-var kkPat = []
-var snPat = []
-var hhPat = []
 let kkMuted 
 let snMuted
 let hhMuted
@@ -84,62 +86,61 @@ const playAudio = () => {
   maxiEngine.init()
   
   // maxiEngine.loadSample('./audio/Kick 606 1.wav', kick)
-  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%20606%201.wav", kick)
-
+  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%20606%201.wav", kick);
   // maxiEngine.loadSample('./audio/Rim 7T8.wav', snare)
-  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Rim%207T8.wav", snare)
-
+  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Rim%207T8.wav", snare);
   // maxiEngine.loadSample('./audio/ClosedHH 1.wav', hihat)
-  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%201.wav", hihat)
-
-  // show an oscilloscope and freqscope
-  // Nexus.context = maxiEngine.context
-  // const oscilloscope = new Nexus.Oscilloscope('oscilloscope', { size: [400, 100] }).connect(maxiEngine.maxiAudioProcessor)
-  // const spectrogram = new Nexus.Spectrogram('spectrogram', { size: [400, 100] }).connect(maxiEngine.maxiAudioProcessor)
+  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%201.wav", hihat);
   
- 
-  
-
+  let w = 0;
+  let tickCounter;
+  let beatCounter;
   maxiEngine.play = function () {
-    var w = 0
-    clock.ticker()
+    clock.ticker();
     if (clock.isTick()) {
       // let beatCounter = clock.playHead % 7;
-      let tickCounter = clock.playHead % subdiv
-      const beatCounter = Math.floor(clock.playHead / subdiv)
-      clockUI.innerHTML = (beatCounter + 1) + ' ' + Math.floor(tickCounter / ticksperbeat + 1) + ' ' + (tickCounter % ticksperbeat + 1) 
-      
-      // CHECK HOW TO CHANGE DATASTRUCTURE TO MATCH RVAE
-      // if ( drumOnsets[0] ) {
-      //   kick.trigger()
-      // }
-      
-      vis.visualize(clock.playHead % LOOP_DURATION)
-      // vis.visualize(subdiv)
+      tickCounter = clock.playHead % subdiv;
+      beatCounter = Math.floor(clock.playHead / subdiv);
+      // clockUI.innerHTML = (beatCounter + 1) + ' ' + Math.floor(tickCounter / ticksperbeat + 1) + ' ' + (tickCounter % ticksperbeat + 1) 
+            
+      vis.visualize(tickCounter)
 
-      if (kkPat.indexOf(tickCounter) >= 0) {
-        if (kkMuted !== true) {
+      if ((kkPat.indexOf(tickCounter)) >= 0) {
+        if ((kkMuted !== true)) {
           kick.trigger()
-          WebMidi.outputs[1].playNote("C1")
+          if (webmidi) { 
+            WebMidi.outputs[0].playNote("C1"); // WebMidi not working on Firefox
+            WebMidi.outputs[1].playNote("C1"); // WebMidi not working on Firefox
+          }
         }
       }
-      if (snPat.indexOf(tickCounter) >= 0) {
-        if (snMuted !== true) {
+      if ((snPat.indexOf(tickCounter)) >= 0) {
+        if ((snMuted !== true)) {
           snare.trigger()
-          WebMidi.outputs[1].playNote("A1")
+          if (webmidi)  {
+            WebMidi.outputs[0].playNote("A1");
+            WebMidi.outputs[1].playNote("A1");
+          }
         }
       }
-      if (hhPat.indexOf(tickCounter) >= 0) {
-        if (hhMuted !== true) {
+      if ((hhPat.indexOf(tickCounter) >= 0)) {
+        if ((hhMuted !== true)) {
           hihat.trigger()
-          WebMidi.outputs[1].playNote("G#1")
+<<<<<<< HEAD
+          if (webmidi) { 
+            WebMidi.outputs[0].playNote("G#1");
+            WebMidi.outputs[1].playNote("G#1");
+          }
+=======
+          WebMidi.outputs[1].playNote("F#1")
+>>>>>>> master
         }
       }
     }
     
-    w = kick.playOnce() 
-    w += snare.playOnce()
-    w += hihat.playOnce() * 0.25
+    w = kick.playOnce() * 0.25
+    w += snare.playOnce() * 0.33
+    w += hihat.playOnce() * 0.125
     return w
   }
 }
@@ -153,18 +154,6 @@ threshold.on('change', function(t) {
 
 noise.on('change', function(n) {
   noiseValue = n
-})
-
-
-let canvas = document.getElementById("LSVisualizer");
-
-// Retrieve patterns from latent space when mouse moves and drags (drawing)
-canvas.addEventListener('mousemove', event => {
-  if (isDrawing) {
-    kkPat = drumOnsets[0]
-    snPat = drumOnsets[1]
-    hhPat = drumOnsets[2]
-  }
 })
 
 
@@ -189,13 +178,13 @@ window.addEventListener("keydown", event => {
 window.addEventListener("keyup", event => {
   if (event.key == "q") {
     kkMuted = false
-    kickPatternbutton.style.background="#FFFFFF"
+    kickPatternbutton.style.background="#000000"
   } else if (event.key == "w") {
     snMuted = false
-    snarePatternbutton.style.background="#FFFFFF"
+    snarePatternbutton.style.background="#000000"
   } else if (event.key == "e") {
     hhMuted = false
-    hihatPatternbutton.style.background="#FFFFFF"
+    hihatPatternbutton.style.background="#000000"
   }
 })
 
