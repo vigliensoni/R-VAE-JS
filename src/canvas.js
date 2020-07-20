@@ -38,12 +38,10 @@ canvas.addEventListener('mousemove', e => {
 });
 
 function getMouse(e) {
-    // Implement this approach later for better compatibility
-    // let mouseX = Math.round(e.clientX - cRect.left);
-    // let mouseY = Math.round(e.clientY - cRect.top);  
-    mouseX = normalize(e.layerX, canvas.width, 3);
-    mouseY = normalize(e.layerY, canvas.width, 3);
-    console.log(mouseX, mouseY)
+    mouseX = Math.round(e.clientX - cRect.left);
+    mouseY = Math.round(e.clientY - cRect.top);
+    mouseX = normalize(mouseX, canvas.width, 3);
+    mouseY = normalize(mouseY, canvas.height, 3);
 }
 
 export { mouseX, mouseY }
