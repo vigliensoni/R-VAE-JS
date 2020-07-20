@@ -1,4 +1,5 @@
 import { MODELS_LS_DATA } from './constants.js'
+import { canvas } from './canvas.js';
 
 const ROWS = 30
 const COLS = 30
@@ -108,44 +109,27 @@ async function getMatrix(spaceURL) {
       }
     }
   }
-  
-  // console.log(matrix3)
 
 })();
 
-let time = 0
+
 // VISUALIZE MATRIX
-function visualize(t) {
+let ctx = canvas.getContext('2d');
+// Since the canvas size is fixed to 900, this don't make sense
+const height = ROWS * INST_SIDE * Px;
+const width = COLS * INST_SIDE * Px;
+canvas.width = width;
+canvas.height = height;
 
-  let canvas = document.getElementById("LSVisualizer")
-  let ctx = canvas.getContext('2d')
-  const height = ROWS * INST_SIDE * Px
-  const width = COLS * INST_SIDE * Px
-  canvas.width = width
-  canvas.height = height
+let idata;
+idata = ctx.createImageData(width, height);
 
-  let from = width * height * 4 * (t)
-  let to = width * height * 4 * (t + 1)
-  let idata = ctx.createImageData(width, height)
-  idata.data.set(matrix3.slice(from, to))
-  ctx.putImageData(idata,0,0)
-
-  // timetag.innerText = "t:" + t + " f:" + from + " t:" + (to-1)
-  time++
+function visualize(t) {  
+  idata.data.set(matrix3.slice(width * height * 4 * (t), width * height * 4 * (t + 1)));
+  ctx.putImageData(idata,0,0);
 }
 
-// let timetag = document.getElementById("timetag")
-
-// visualize(time)
-window.addEventListener("load", () => { visualize(0) }, false )
-// timetag.addEventListener("click", () => { visualize(time) }, false )
-
-// while (true) {
-//   for (let t=0; t < 96; t++){
-//     visualize(t)
-//     await new Promise(r => setTimeout(r, 4));
-//   }
-// }
+window.addEventListener("load", () => { visualize(0) }, false );
 
 // 
 // 1. Arreglar la matriz, no crear todo cada vez, crear un array de 96 idata
