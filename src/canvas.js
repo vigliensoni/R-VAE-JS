@@ -18,6 +18,7 @@ canvas.addEventListener('mousedown', e => {
     isDrawing = true;
     enableCall = false;
     getMouse(e);
+    latspaceRetriever(mouseX, mouseY);
     setTimeout(() => enableCall = true, 300);
 });
 
