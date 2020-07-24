@@ -5,7 +5,7 @@ This web-based device enables the easy exploration of a latent space learned fro
 
 Based on [Nao Tokui's RhythmVAE](https://github.com/naotokui/RhythmVAE_M4L)
 
-Currently only working on Firefox.
+Audio playback working on Firefox and Chrome. MIDI output only working on Chrome.
 
 Play with R-VAE on the browser: https://vigliensoni.github.io/R-VAE-JS/
 
