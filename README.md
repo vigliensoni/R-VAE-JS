@@ -7,7 +7,7 @@ Based on [Nao Tokui's RhythmVAE](https://github.com/naotokui/RhythmVAE_M4L)
 
 Audio playback working on Firefox and Chrome. MIDI output only working on Chrome.
 
-Play with R-VAE on the browser: https://vigliensoni.github.io/R-VAE-JS/
+Play with latest version of R-VAE on the browser: https://vigliensoni.github.io/R-VAE-JS-dev/
 
 
 ### Installation:
