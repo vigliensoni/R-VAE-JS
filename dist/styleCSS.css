@@ -39,6 +39,8 @@ body {
   margin: auto;
   display: block;
   width: 800px;
+  position: relative;
+  top: -50px;
 }
 
 button {
@@ -58,37 +60,25 @@ button:hover {
   border:solid #FFD12C 5px;
 }
 
-/*
-#knobs {
-  display: inline-block;
-  color: #red;
-  font-size: 100%;
-}
-*/
 
-
-
-/* #performanceCanvas {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-} */
 /* NUEVOS */
 #page-wrapper {
 	padding-bottom:1px;
 }
+
+
 
 #header-wrapper {
 	position:relative;
 }
 
 #logo {
-/* 		position: absolute; */
-	z-index:1;
+  position: relative;
+  top: -45px;
+	/* z-index:1;
 	top:0;
 	left:0;
-	width:300px;
-/* 		margin-left: -7.5em; */
+	width:300px; */
 }
 
 #logo a {
@@ -113,10 +103,6 @@ button:hover {
 	top:0;
 	left:0;
 	width:50%;
-/*
-		height: 4em;
-		line-height: 4em;
-*/
 }
 
 #nav > ul {
@@ -140,3 +126,21 @@ h2 {
     font-size: 24px;
 }
 
+/* #playButton {
+  margin-top: 50px;
+} */
+
+.botonPlay {
+  position: relative;
+  top: -70px;
+}
+
+.dials {
+  position: relative;
+  top: -40px;
+}
+
+#subtitle {
+  position: relative;
+  top: -25px;
+}

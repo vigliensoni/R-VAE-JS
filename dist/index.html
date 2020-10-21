@@ -3,8 +3,10 @@
 <html>
 <head>
     <meta charset="utf-8">
-
     <title>RELS</title>
+    <script src="libs/pace.min.js"></script>
+    <link href="libs/pace-theme-center-atom.css" rel="stylesheet" />
+
     <link href="https://fonts.googleapis.com/css?family=Staatliches" rel="stylesheet" type="text/css">
     <script src="./libs/nexusUI.js" type="text/javascript">
 </script>
@@ -25,23 +27,18 @@
 
                 <div id="logo">
                     <h1>R-VAE</h1>
-
-                    <p>Rhythmic explorations of latent spaces</p>
-                </div><!-- Nav -->
-
+                    <p id="subtitle">Rhythmic explorations of latent spaces</p>
+                </div>
+                <!-- Nav -->
                 <nav id="nav">
                     <ul>
-                        <li>
-                            <div id="thresholdDial">
-                                THRES
-                            </div>
-                        </li>
+                        <li><div class="dials" id="thresholdDial">THRES</div></li>
+                        <li><div class="dials" id="noiseDial">NOISE</div></li>
+                        <li><div class="botonPlay"><button id="playButton">Play</button></div></li>
+                            
+                            
 
-                        <li>
-                            <div id="noiseDial">
-                                NOISE
-                            </div>
-                        </li>
+                        
 
 <!--
                         <li><button id="kickPatternbutton">KK - Q</button></li>
@@ -57,9 +54,9 @@
             <div class="container">
                 <canvas id="LSVisualizer"></canvas>
 
-                <div>
+                <!-- <div>
                     <button id="playButton">Play</button>
-                </div><!-- <div><button id="stopButton" style="display:none">Stop</button></div> -->
+                </div> -->
             </div>
 
             <div id="oscilloscope"></div>
