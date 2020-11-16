@@ -14,7 +14,7 @@
 }
 
 body {
-  font-family: 'Staatliches';
+  font-family: 'Rubik', sans-serif;
   font-size: 30px;
   /* color: black; */
   color: whitesmoke;
@@ -50,7 +50,7 @@ button {
   width:120px;
   padding:10px;
   margin:10px;
-  font-family: 'Staatliches';
+  font-family: 'Rubik';
     font-size: 25px;
 }
 
@@ -65,8 +65,6 @@ button:hover {
 #page-wrapper {
 	padding-bottom:1px;
 }
-
-
 
 #header-wrapper {
 	position:relative;
@@ -143,4 +141,16 @@ h2 {
 #subtitle {
   position: relative;
   top: -25px;
+}
+
+.center {
+  text-align: center;
+}
+
+a:link {
+  color: white;
+}
+
+a:hover{
+  color: red;
 }
