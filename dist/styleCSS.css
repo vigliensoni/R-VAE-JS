@@ -45,7 +45,7 @@ body {
 
 button {
   background-color: transparent;
-  color:grey;
+  color:#FFD12C;
   border:solid black 5px;
   width:120px;
   padding:10px;
@@ -138,9 +138,14 @@ h2 {
   top: -40px;
 }
 
+.dials-mute {
+  position: relative;
+  top: -60px;
+}
+
 #subtitle {
   position: relative;
-  top: -25px;
+  top: -50px;
 }
 
 .center {
