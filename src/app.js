@@ -163,9 +163,9 @@ noise.on('change', function(n) {
 
 
 
-// button listeners
+// BUTTON LISTENERS
 
-
+// MUTE BUTTONS ON
 window.addEventListener("keydown", event => {
   if (event.key == "q" & allMuted == false) {
     kkMuted = true
@@ -189,9 +189,12 @@ window.addEventListener("keydown", event => {
     snMuted = false
     hhMuted = false
     allmuteButton.style.background="#000000"
+    allmuteButton.style.color="#FFD12C"
+    
   }
 })
 
+// MUTE BUTTONS OFF
 window.addEventListener("keyup", event => {
   if (event.key == "q" & allMuted == false) {
     kkMuted = false
@@ -204,6 +207,25 @@ window.addEventListener("keyup", event => {
     hihatPatternbutton.style.background="#000000"
   } 
 })
+
+// CLICK ON SOUND OFF
+allmuteButton.addEventListener('click', () => {
+  if (allMuted == true ) {
+    allMuted = false
+    kkMuted = false
+    snMuted = false
+    hhMuted = false
+    allmuteButton.style.background="#000000"
+  } else if (allMuted == false ) {
+    allMuted = true
+    kkMuted = true
+    snMuted = true
+    hhMuted = true
+    allmuteButton.style.background="#FF0000"
+  }
+})
+
+
 
 
 function randomNumber (n = 16) {
