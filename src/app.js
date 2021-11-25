@@ -111,7 +111,9 @@ const playAudio = () => {
       tickCounter = clock.playHead % subdiv;
       beatCounter = Math.floor(clock.playHead / subdiv);
       // clockUI.innerHTML = (beatCounter + 1) + ' ' + Math.floor(tickCounter / ticksperbeat + 1) + ' ' + (tickCounter % ticksperbeat + 1) 
-            
+
+      console.log(tickCounter);
+
       vis.visualize(tickCounter)
 
       if ((kkPat.indexOf(tickCounter)) >= 0) {
