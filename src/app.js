@@ -8,11 +8,12 @@ import * as vis from "./visualization.js"
 // import { MODELS_LS_DATA } from './constants.js'
 
 
-const playButton = document.getElementById('playButton')
-const clockUI = document.getElementById('clock')
+// const playButton = document.getElementById('goButton')
+// const clockUI = document.getElementById('clock')
 const kickPatternbutton = document.getElementById('kickPatternbutton')
 const snarePatternbutton = document.getElementById('snarePatternbutton')
 const hihatPatternbutton = document.getElementById('hihatPatternbutton')
+const allmuteButton = document.getElementById('allmuteButton')
 
 let webmidi
 
@@ -77,14 +78,15 @@ const noise = new Nexus.Dial('#noiseDial', {
 let kkMuted 
 let snMuted
 let hhMuted
+let allMuted = false
 
 // when the play button is pressed...
 const playAudio = () => {
   // arrange play button
-  playButton.style.display = 'none'
+  // playButton.style.display = 'none'
   // start the audio engine
   maxiEngine.init()
-  
+
   // maxiEngine.loadSample('./audio/Kick 606 1.wav', kick)
   maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%20606%201.wav", kick);
   // maxiEngine.loadSample('./audio/Rim 7T8.wav', snare)
@@ -92,6 +94,13 @@ const playAudio = () => {
   // maxiEngine.loadSample('./audio/ClosedHH 1.wav', hihat)
   maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%201.wav", hihat);
   
+  // if (playButton.textContent === "PLAY") {
+  //   playButton.textContent = "STOP"
+  // } else {
+  //   playButton.textContent = "PLAY"
+  // }
+
+
   let w = 0;
   let tickCounter;
   let beatCounter;
@@ -102,7 +111,9 @@ const playAudio = () => {
       tickCounter = clock.playHead % subdiv;
       beatCounter = Math.floor(clock.playHead / subdiv);
       // clockUI.innerHTML = (beatCounter + 1) + ' ' + Math.floor(tickCounter / ticksperbeat + 1) + ' ' + (tickCounter % ticksperbeat + 1) 
-            
+
+      // console.log(tickCounter);
+
       vis.visualize(tickCounter)
 
       if ((kkPat.indexOf(tickCounter)) >= 0) {
@@ -154,35 +165,69 @@ noise.on('change', function(n) {
 
 
 
-// button listeners
+// BUTTON LISTENERS
 
-
+// MUTE BUTTONS ON
 window.addEventListener("keydown", event => {
-  if (event.key == "q") {
+  if (event.key == "q" & allMuted == false) {
     kkMuted = true
     kickPatternbutton.style.background="#FF0000"
     console.log('muted')
-  } else if (event.key == "w") {
+  } else if (event.key == "w" & allMuted == false) {
     snMuted = true
     snarePatternbutton.style.background="#FF0000"
-  } else if (event.key == "e") {
+  } else if (event.key == "e" & allMuted == false) {
     hhMuted = true
     hihatPatternbutton.style.background="#FF0000"
+  } else if (event.key == "r" & allMuted == false ) {
+    allMuted = true
+    kkMuted = true
+    snMuted = true
+    hhMuted = true
+    allmuteButton.style.background="#FF0000"
+  } else if (event.key == "r" & allMuted == true ) {
+    allMuted = false
+    kkMuted = false
+    snMuted = false
+    hhMuted = false
+    allmuteButton.style.background="#000000"
+    allmuteButton.style.color="#FFD12C"
+    
   }
 })
 
+// MUTE BUTTONS OFF
 window.addEventListener("keyup", event => {
-  if (event.key == "q") {
+  if (event.key == "q" & allMuted == false) {
     kkMuted = false
     kickPatternbutton.style.background="#000000"
-  } else if (event.key == "w") {
+  } else if (event.key == "w" & allMuted == false) {
     snMuted = false
     snarePatternbutton.style.background="#000000"
-  } else if (event.key == "e") {
+  } else if (event.key == "e" & allMuted == false) {
     hhMuted = false
     hihatPatternbutton.style.background="#000000"
+  } 
+})
+
+// CLICK ON SOUND OFF
+allmuteButton.addEventListener('click', () => {
+  if (allMuted == true ) {
+    allMuted = false
+    kkMuted = false
+    snMuted = false
+    hhMuted = false
+    allmuteButton.style.background="#000000"
+  } else if (allMuted == false ) {
+    allMuted = true
+    kkMuted = true
+    snMuted = true
+    hhMuted = true
+    allmuteButton.style.background="#FF0000"
   }
 })
+
+
 
 
 function randomNumber (n = 16) {
@@ -215,8 +260,10 @@ function randomPattern () {
 
 
 
-playButton.addEventListener('click', () => playAudio())
-
+// playButton.addEventListener('click', () => {
+//   playAudio()
+// })
+playAudio()
 
 
 export { playAudio, thresholdValue, noiseValue }

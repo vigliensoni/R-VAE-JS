@@ -3,85 +3,30 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>RELS</title>
-    <script src="libs/pace.min.js"></script>
-    <link href="libs/pace-theme-center-atom.css" rel="stylesheet" />
+    <title>R-VAE-JS</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet"> 
 
-    <link href="https://fonts.googleapis.com/css?family=Staatliches" rel="stylesheet" type="text/css">
-    <script src="./libs/nexusUI.js" type="text/javascript">
-</script>
-    <script src="./libs/maximilian.js" type="text/javascript">
-</script>
-    <script src="https://cdn.jsdelivr.net/npm/webmidi@2.0.0" type="text/javascript">
-</script>
     <link rel="stylesheet" href="./styleCSS.css" type="text/css">
 </head>
 
 <body>
-    <div id="page-wrapper">
-        <!-- Header -->
+    <div class="center">
+        <p>This is R-VAE-JS</p>
+        <p>a rhythmic model player and visualizer for <a href="https://github.com/vigliensoni/R-VAE">R-VAE</a></p>
+        <p>Press <a href="./app.html>">Go!</a> to load a model and play</p>
+        <h1 id="goButton"><a href="./app.html">GO!</a></h1>
+        
+        <p>Instructions:</p>
+        <p>1. Move the mouse in the performance space</p>
+        <p>2. Click on the space to retrieve and decode a rhythm</p>
+        <p>3. Drag the mouse to interpolate rhythms</p>
+        <p>4. Change the Threshold to modify the number of onsets retrieved</p>
+        <p>5. Change the Noise to add variability to the position of the mouse</p>
+        <p>6. Mute individuals instruments by pressing Q, W, or E</p>
+        <p>7. Mute all by pressing R</p>
 
-        <div id="header-wrapper">
-            <div id="header" class="container">
-                <!-- Logo -->
+    </div>
 
-                <div id="logo">
-                    <h1>R-VAE</h1>
-                    <p id="subtitle">Rhythmic explorations of latent spaces</p>
-                </div>
-                <!-- Nav -->
-                <nav id="nav">
-                    <ul>
-                        <li><div class="dials" id="thresholdDial">THRES</div></li>
-                        <li><div class="dials" id="noiseDial">NOISE</div></li>
-                        <li><div class="botonPlay"><button id="playButton">Play</button></div></li>
-                            
-                            
-
-                        
-
-<!--
-                        <li><button id="kickPatternbutton">KK - Q</button></li>
-                        <li><button id="snarePatternbutton">SN - W</button></li>
-                        <li><button id="hihatPatternbutton">HH - E</button></li>
--->
-                    </ul>
-                </nav>
-            </div>
-        </div><!-- header wrapper -->
-
-        <div class="wrapper">
-            <div class="container">
-                <canvas id="LSVisualizer"></canvas>
-
-                <!-- <div>
-                    <button id="playButton">Play</button>
-                </div> -->
-            </div>
-
-            <div id="oscilloscope"></div>
-            <div id="spectrogram"></div>
-            <div id="clock"></div>
-            <div id="mutes">
-                <button id="kickPatternbutton">Kick - Q</button> <button id="snarePatternbutton">Snare - W</button> <button id="hihatPatternbutton">Hihat - E</button>
-            </div>
-
-            <div class="instructions">
-                <h2>Instructions:</h2>
-
-                <ol>
-                    <li>Using the mouse, move the yellow playback head in the performance space</li>
-                    <li>Click on the playback head to enable it and listen to the rhythm retrieved</li>
-                    <li>You can also drag the mouse to get rhythmic interpolations</li>
-                    <li>Increase the Threshold to retrieve simpler patterns</li>
-                    <li>Increase the Noise to add variability to the position of the playback head</li>
-                    <li>Mute individuals instruments by pressing Q, W, or E</li>
-                </ol>
-            </div>
-        </div><!-- container -->
-    </div><!-- wrapper -->
-    <!-- page-wrapper -->
-    <script src="main.js" type="text/javascript">
-</script>
 </body>
 </html>

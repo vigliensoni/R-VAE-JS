@@ -198,6 +198,9 @@ vae.loadModel(MODELS_LS_DATA['footwork']['model-url'])
 // vae.loadModel(MODELS_LS_DATA['footwork']['model-url'])
 // vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/trap_all_files.model/model.json") 
 
+// FOOTWORK
+// vae.loadModel(MODELS_LS_DATA['2-clips-12-epochs']['model-url'])
+// vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/footwork-model/model.json") 
 
 
 /////////////////////////////////////////////////////////////

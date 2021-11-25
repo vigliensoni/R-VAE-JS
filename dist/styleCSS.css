@@ -14,7 +14,7 @@
 }
 
 body {
-  font-family: 'Staatliches';
+  font-family: 'Rubik', sans-serif;
   font-size: 30px;
   /* color: black; */
   color: whitesmoke;
@@ -45,12 +45,12 @@ body {
 
 button {
   background-color: transparent;
-  color:grey;
+  color:#FFD12C;
   border:solid black 5px;
   width:120px;
   padding:10px;
   margin:10px;
-  font-family: 'Staatliches';
+  font-family: 'Rubik';
     font-size: 25px;
 }
 
@@ -65,8 +65,6 @@ button:hover {
 #page-wrapper {
 	padding-bottom:1px;
 }
-
-
 
 #header-wrapper {
 	position:relative;
@@ -140,7 +138,24 @@ h2 {
   top: -40px;
 }
 
+.dials-mute {
+  position: relative;
+  top: -60px;
+}
+
 #subtitle {
   position: relative;
-  top: -25px;
+  top: -50px;
+}
+
+.center {
+  text-align: center;
+}
+
+a:link {
+  color: white;
+}
+
+a:hover{
+  color: red;
 }
