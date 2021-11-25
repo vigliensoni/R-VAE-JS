@@ -44,7 +44,7 @@ let clock = new maxi.maxiClock()
 
 // control sequencer 
 const subdiv = 96 // 4 * 24 -> 1 beat
-const ticksperbeat = 24 // GV: why this is 12 and not 24?
+const ticksperbeat = 12 // GV: why this is 12 and not 24?
 clock.setTempo(160) // Running at 160, though
 clock.setTicksPerBeat(ticksperbeat)
 
@@ -125,7 +125,7 @@ const playAudio = () => {
 
       // console.log(tickCounter);
 
-      vis.visualize(tickCounter)
+      vis.visualize(tickCounter - 1) // one tick before to be in sync
 
       if ((kkPat.indexOf(tickCounter)) >= 0) {
         if ((kkMuted !== true)) {
