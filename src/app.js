@@ -52,6 +52,7 @@ clock.setTicksPerBeat(ticksperbeat)
 // declare variables for dial
 var thresholdValue
 var noiseValue
+var tempoValue
 
 // create dials
 const threshold = new Nexus.Dial('#thresholdDial', {
@@ -71,6 +72,16 @@ const noise = new Nexus.Dial('#noiseDial', {
   step: 0.01,
   value: 0.0
 })
+
+const tempo = new Nexus.Dial('#tempoDial', {
+  interaction: 'vertical',
+  mode: 'absolute',
+  min: 10,
+  max: 200,
+  step: 5,
+  value: 120
+})
+
 
 // console.log(threshold)
 
@@ -163,6 +174,10 @@ noise.on('change', function(n) {
   noiseValue = n
 })
 
+tempo.on('change', function(t) {
+  tempoValue = t;
+  clock.setTempo(tempoValue);
+})
 
 
 // BUTTON LISTENERS
