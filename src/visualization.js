@@ -38,6 +38,7 @@ let matrix3 = new Uint8ClampedArray(ROWS * INST_SIDE * COLS * INST_SIDE * LOOP_D
 
 // TRAP
 let spaceURL = MODELS_LS_DATA['footwork']['space-url']
+// let spaceURL = MODELS_LS_DATA['2-clips-12-epochs']['space-url']
 
 
 async function getMatrix(spaceURL) {

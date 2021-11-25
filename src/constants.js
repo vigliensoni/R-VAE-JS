@@ -86,7 +86,22 @@ const MODELS_LS_DATA = {
     "name": "trap",
     "model-url": "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/trap_all_files.model/model.json", 
     "space-url": "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/trap_all_files.model/model-matrix-LS.data"
-  }
+  },
+  '2-clips-12-epochs': {
+    "name": "2-clips-12-epochs",
+    "model-url": "data/02-clips-12-epochs/model.json", 
+    "space-url": "data/02-clips-12-epochs/02-clips-12-epochs-matrix-LS.data"
+  },
+  '2-clips-150-epochs': {
+    "name": "2-clips-150-epochs",
+    "model-url": "data/02-clips-150-epochs/model.json", 
+    "space-url": "data/02-clips-150-epochs/02-clips-150-epochs-matrix-LS.data"
+  },
+  '2-clips-1000-epochs': {
+    "name": "2-clips-1000-epochs",
+    "model-url": "data/02-clips-1000-epochs/model.json", 
+    "space-url": "data/02-clips-1000-epochs/02-clips-1000-epochs-matrix-LS.data"
+  },
 }
 
 const NUM_DRUM_CLASSES = DRUM_CLASSES.length;
