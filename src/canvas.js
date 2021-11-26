@@ -12,10 +12,12 @@ let enableCall = true;
 
 const normalize = (x, max, scaleToMax) => (x/max - 0.5) * 2 * scaleToMax;
 
-let mouseCanvas = document.getElementById("LSVisualizer");
+let mouseCanvas = document.getElementById("playbackheadSpace");
 let mouseCanvasctx = mouseCanvas.getContext("2d");
+console.log(mouseCanvas);
+console.log(mouseCanvasctx);
 
-canvas.addEventListener('mousedown', e => {
+mouseCanvas.addEventListener('mousedown', e => {
     if(!enableCall) return;
     isDrawing = true;
     enableCall = false;
@@ -28,13 +30,13 @@ canvas.addEventListener('mousedown', e => {
     setTimeout(() => enableCall = true, 300);
 });
 
-canvas.addEventListener('mouseup', e => {
+mouseCanvas.addEventListener('mouseup', e => {
     if (isDrawing === true) {
         isDrawing = false;
     }
 });
 
-canvas.addEventListener('mousemove', e => {
+mouseCanvas.addEventListener('mousemove', e => {
     if(!enableCall) return;
     if (isDrawing === true) {
         enableCall = false;
