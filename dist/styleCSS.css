@@ -10,7 +10,7 @@
   /* background-color: #8ED9FF; */
   background-color: #000000;
   width:auto;
-  height:800px;
+  height:900px;
 }
 
 body {
@@ -32,17 +32,6 @@ body {
 
 #section {
   font-size: 50%; 
-}
-
-#LSVisualizer {
-  padding: 0;
-  margin: auto;
-  display: block;
-  width: 900px;
-  position: relative;
-  top: 0px;
-  background: #0d0d0d;
-  outline: rgb(30, 30, 30) 2px solid;
 }
 
 button {
@@ -162,6 +151,9 @@ a:hover{
   color: red;
 }
 
+
+/* SPACES */
+
 .spaceContainer {
   top: 0px;
   width: 900px;
@@ -175,11 +167,24 @@ a:hover{
   position: absolute;
   top: 0;
   left: 0;
-  opacity: 0.7;
+  opacity: 1.0;
   background: #0057e3;
 }
 .overlay {
-  z-index: -9;
+  z-index: 9;
   margin: 0px;
-  background: #032710;
+  opacity: 0.25;
+  background: #000000;
 }
+
+#LSVisualizer {
+  padding: 0;
+  margin: auto;
+  display: block;
+  width: 900px;
+  position: relative;
+  top: 0px;
+  background: #0d0d0d;
+  outline: rgb(30, 30, 30) 2px solid;
+}
+
