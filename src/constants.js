@@ -111,6 +111,20 @@ const MIN_ONSETS_THRESHOLD = 5; // ignore loops with onsets less than this num
 
 const ORIGINAL_DIM = NUM_DRUM_CLASSES * LOOP_DURATION;
 
+
+const ROWS = 30
+const COLS = 30
+const INST_SIDE = Math.sqrt(NUM_DRUM_CLASSES) // 3 - SIDE OF THE INSTRUMENT CUBE
+const Px = 10 // Number of pixels per point in the space
+
+
+exports.ROWS = ROWS;
+exports.COLS = COLS;
+exports.INST_SIDE = INST_SIDE;
+exports.Px = Px;
+
+
+
 exports.MIDI_DRUM_MAP = MIDI_DRUM_MAP;
 exports.DRUM_CLASSES = DRUM_CLASSES;
 
