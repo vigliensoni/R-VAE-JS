@@ -1,12 +1,9 @@
-import { MODELS_LS_DATA } from './constants.js'
+import { MODELS_LS_DATA } from './constants.js';
+import { ROWS, COLS, LOOP_DURATION, NUM_DRUM_CLASSES, Px } from './constants.js';
 import { canvas } from './canvas.js';
 
-const ROWS = 30
-const COLS = 30
-const LOOP_DURATION = 96
-const NUM_DRUM_CLASSES = 9
 const INST_SIDE = Math.sqrt(NUM_DRUM_CLASSES) // 3 - SIDE OF THE INSTRUMENT CUBE
-const Px = 10
+
 
 
 // CREATING AN LS MATRIX
