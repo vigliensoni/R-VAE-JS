@@ -61,7 +61,7 @@ const threshold = new Nexus.Dial('#thresholdDial', {
   min: 0.01,
   max: 0.99,
   step: 0.01,
-  value: 0.99
+  value: 0.25
 })
 
 const noise = new Nexus.Dial('#noiseDial', {
@@ -79,7 +79,7 @@ const tempo = new Nexus.Dial('#tempoDial', {
   min: 10,
   max: 200,
   step: 5,
-  value: 120
+  value: 160
 })
 
 
@@ -107,11 +107,9 @@ const playAudio = () => {
   maxiEngine.init()
 
   // maxiEngine.loadSample('./audio/Kick 606 1.wav', kick)
-  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%20606%201.wav", kick);
-  // maxiEngine.loadSample('./audio/Rim 7T8.wav', snare)
-  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Rim%207T8.wav", snare);
-  // maxiEngine.loadSample('./audio/ClosedHH 1.wav', hihat)
-  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%201.wav", hihat);
+  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/kk-3.wav", kick);
+  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/sn-3.wav", snare);
+  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/hh-3.wav", hihat);
   
   // if (playButton.textContent === "PLAY") {
   //   playButton.textContent = "STOP"
