@@ -107,5 +107,11 @@ mouseCanvas.addEventListener('mousemove', e => {
     }
 });
 
+window.addEventListener("keydown", event => {
+    if (event.key == "c") {
+        mouseCanvasctx.clearRect(0, 0, mouseCanvas.width, mouseCanvas.height);
+    }
+  })
+
 
 export { mouseX, mouseY, canvas }
