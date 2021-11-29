@@ -15,7 +15,7 @@ const snarePatternbutton = document.getElementById('snarePatternbutton')
 const hihatPatternbutton = document.getElementById('hihatPatternbutton')
 const allmuteButton = document.getElementById('allmuteButton')
 
-let webmidi
+let webmidi;
 
 // loading WebMIDI
 WebMidi.enable(function (err) {
@@ -91,6 +91,14 @@ let snMuted
 let hhMuted
 let allMuted = false
 
+
+
+
+
+
+
+
+
 // when the play button is pressed...
 const playAudio = () => {
   // arrange play button
@@ -156,9 +164,9 @@ const playAudio = () => {
       }
     }
     
-    w = kick.playOnce() * 0.25
-    w += snare.playOnce() * 0.33
-    w += hihat.playOnce() * 0.125
+    w = kick.playOnce() * 0.5
+    w += snare.playOnce() * 0.66
+    w += hihat.playOnce() * 0.250
     return w
   }
 }
@@ -242,7 +250,23 @@ allmuteButton.addEventListener('click', () => {
   }
 })
 
-
+// MUTE BUTTONS ON
+window.addEventListener("keydown", event => {
+  if (event.key == "1" ) {
+    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%20606%201.wav", kick);
+    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Rim%207T8.wav", snare);
+    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%201.wav", hihat);
+    
+  } else if (event.key == "2" ) {
+    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%207T8.wav", kick);
+    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Snare%207T8.wav", snare);
+    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%20Absynth%203.wav", hihat);
+  } else if (event.key == "3" ) {
+    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/kk-3.wav", kick);
+    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/sn-3.wav", snare);
+    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/hh-3.wav", hihat);
+  }
+})
 
 
 function randomNumber (n = 16) {
