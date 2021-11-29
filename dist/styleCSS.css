@@ -61,6 +61,10 @@ button:hover {
 	position:relative;
 }
 
+.LSwrapper {
+  margin-top: -100px;
+}
+
 #logo {
   position: relative;
   top: -45px;
@@ -91,7 +95,7 @@ button:hover {
 	position:absolute;
 	top:0;
 	left:0;
-	width:50%;
+	/* width:50%; */
 }
 
 #nav > ul {
