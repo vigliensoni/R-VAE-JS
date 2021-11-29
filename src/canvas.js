@@ -77,7 +77,7 @@ mouseCanvas.addEventListener('mousedown', e => {
     isDrawing = true;
     enableCall = false;
     
-    mouseCanvasctx.fillStyle = "#FF0000"
+    mouseCanvasctx.fillStyle = "#00FF00"
     // mouseCanvasctx.fillRect(e.layerX*factor, e.layerY*factor, 10*factor, 10*factor);
     
     mouseCanvasctx.beginPath();
@@ -105,6 +105,19 @@ mouseCanvas.addEventListener('mousemove', e => {
         
         setTimeout(() => enableCall = true, 100);
     }
+});
+
+
+mouseCanvas.addEventListener('mouseup', e => {
+    // if (isDrawing === true) {
+        mouseCanvasctx.fillStyle = "#FF0000"
+        // mouseCanvasctx.fillRect(e.layerX*factor, e.layerY*factor, 10*factor, 10*factor);
+        mouseCanvasctx.beginPath();
+        mouseCanvasctx.arc(e.layerX*factor, e.layerY*factor, 10*factor, 0, 2*Math.PI);
+        mouseCanvasctx.fill();
+        
+        setTimeout(() => enableCall = true, 100);
+    // }
 });
 
 window.addEventListener("keydown", event => {
