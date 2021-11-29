@@ -77,7 +77,7 @@ mouseCanvas.addEventListener('mousedown', e => {
     isDrawing = true;
     enableCall = false;
     
-    mouseCanvasctx.fillStyle = "#00FF00"
+    mouseCanvasctx.fillStyle = "#FF0000"
     // mouseCanvasctx.fillRect(e.layerX*factor, e.layerY*factor, 10*factor, 10*factor);
     
     mouseCanvasctx.beginPath();
