@@ -22,9 +22,9 @@ let width = COLS * INST_SIDE * Px;
 mouseCanvas.height = height;
 mouseCanvas.width = width;
 
-const factor = mouseCanvas.width/900; // amplification factor in relation to 900 px canvas
+const factor = mouseCanvas.width/360; // amplification factor in relation to 900 px canvas
 
-// console.log(mouseCanvas);
+console.log(factor, height);
 // console.log(mouseCanvasctx);
 
 mouseCanvas.addEventListener('mousedown', e => {

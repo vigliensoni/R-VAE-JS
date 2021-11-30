@@ -115,7 +115,7 @@ const ORIGINAL_DIM = NUM_DRUM_CLASSES * LOOP_DURATION;
 const ROWS = 30
 const COLS = 30
 const INST_SIDE = Math.sqrt(NUM_DRUM_CLASSES) // 3 - SIDE OF THE INSTRUMENT CUBE
-const Px = 10 // Number of pixels per point in the space
+const Px = 4 // Number of pixels per point in the space
 
 
 exports.ROWS = ROWS;
