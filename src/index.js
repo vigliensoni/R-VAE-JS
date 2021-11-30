@@ -191,7 +191,7 @@ function processMidiFile(filename){
 // vae.loadModel("http://localhost:8080/footwork-model/model_2020616_135157.model/model.json")
 
 // FOOTWORK
-vae.loadModel(MODELS_LS_DATA['footwork']['model-url'])
+vae.loadModel(MODELS_LS_DATA['trap']['model-url'])
 // vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/footwork-model/model.json") 
 
 // TRAP

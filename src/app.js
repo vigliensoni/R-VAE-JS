@@ -15,6 +15,7 @@ const snarePatternbutton = document.getElementById('snarePatternbutton')
 const hihatPatternbutton = document.getElementById('hihatPatternbutton')
 const allmuteButton = document.getElementById('allmuteButton')
 
+
 let webmidi;
 
 // loading WebMIDI
@@ -76,7 +77,7 @@ const noise = new Nexus.Dial('#noiseDial', {
 const tempo = new Nexus.Dial('#tempoDial', {
   interaction: 'vertical',
   mode: 'absolute',
-  min: 10,
+  min: 60,
   max: 200,
   step: 5,
   value: 160
@@ -231,8 +232,39 @@ window.addEventListener("keyup", event => {
   } 
 })
 
+// CLICK ON MUTE BUTTONS
+kickPatternbutton.addEventListener('mousedown', () => {
+  if ( kkMuted == false ) {
+    kkMuted = true
+    kickPatternbutton.style.background="#FF0000"
+  } else if ( kkMuted == true ) {
+    kkMuted = false
+    kickPatternbutton.style.background="#000000"
+  }
+})
+
+snarePatternbutton.addEventListener('mousedown', () => {
+  if ( snMuted == false ) {
+    snMuted = true
+    snarePatternbutton.style.background="#FF0000"
+  } else if ( snMuted == true ) {
+    snMuted = false
+    snarePatternbutton.style.background="#000000"
+  }
+})
+
+hihatPatternbutton.addEventListener('mousedown', () => {
+  if ( hhMuted == false ) {
+    hhMuted = true
+    hihatPatternbutton.style.background="#FF0000"
+  } else if ( hhMuted == true ) {
+    hhMuted = false
+    hihatPatternbutton.style.background="#000000"
+  }
+})
+
 // CLICK ON SOUND OFF
-allmuteButton.addEventListener('click', () => {
+allmuteButton.addEventListener('mousedown', () => {
   if (allMuted == true ) {
     allMuted = false
     kkMuted = false

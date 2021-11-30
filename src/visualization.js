@@ -34,7 +34,7 @@ let matrix3 = new Uint8ClampedArray(ROWS * INST_SIDE * COLS * INST_SIDE * LOOP_D
 // let url = "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/footwork-model/model-matrix-LS.data"
 
 // TRAP
-let spaceURL = MODELS_LS_DATA['footwork']['space-url']
+let spaceURL = MODELS_LS_DATA['trap']['space-url']
 // let spaceURL = MODELS_LS_DATA['2-clips-12-epochs']['space-url']
 
 
