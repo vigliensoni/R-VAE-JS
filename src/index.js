@@ -12,7 +12,7 @@ import { Midi } from '@tonejs/midi';
 // import * as UI from '@tonejs/ui';
 // import * as webcomponents from '@webcomponents/webcomponentsjs';
 // import * as Tone from "tone";
-
+import { thresholdValue, noiseValue } from './app.js';
 
 // Constants
 import { MIDI_DRUM_MAP } from './constants.js';
@@ -207,7 +207,7 @@ vae.loadModel(MODELS_LS_DATA['trap']['model-url'])
 // GENERATE 
 /////////////////////////////////////////////////////////////
 
-function generate(z1, z2, threshold = 0.5, noise_range = 0.0) {
+function generate(z1, z2, threshold = thresholdValue, noise_range = noiseValue) {
     try {
         generatePattern(z1, z2, threshold, noise_range);
         // console.log('GV generatePattern');
@@ -225,7 +225,7 @@ async function generatePattern(z1, z2, threshold, noise_range){
       isGenerating = true;
     //   note z2 axis is inverted, i.e., negative on top
       let [onsets, velocities, timeshifts] = vae.generatePattern(z1, -1*z2, noise_range);
-      let NUM_DRUM_CLASSES = 3; // GV: To generate only [kk, sn, hh]
+    //   let NUM_DRUM_CLASSES = 3; // GV: To generate only [kk, sn, hh]
     //   drumOnsets = {} // GV Empty variable before declaring it again. Needed?
 
       for (var i=0; i< NUM_DRUM_CLASSES; i++){
