@@ -1,5 +1,5 @@
-:root {
-  --canvassize: 900;
+/* :root {
+  --canvassize: 900; */
 }
 
 #inner-container {
@@ -14,7 +14,7 @@
   /* background-color: #8ED9FF; */
   background-color: #000000;
   width:auto;
-  height: var(--canvassize);
+  /* height: var(--canvassize); */
 }
 
 
@@ -163,8 +163,8 @@ a:hover{
 
 .spaceContainer {
   top: 0px;
-  width: var(--canvassize);
-  height: var(--canvassize);
+  /* width: var(--canvassize); */
+  /* height: var(--canvassize); */
   position: relative;
   margin: auto;
 }
@@ -186,7 +186,7 @@ a:hover{
 #LSVisualizer {
   padding: 0;
   display: block;
-  width: var(--canvassize);
+  /* width: var(--canvassize); */
   position: relative;
   top: 0px;
   background: #0d0d0d;
