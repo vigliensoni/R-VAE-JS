@@ -46,6 +46,7 @@ var train_data_timeshifts = [];
 var isGenerating = false;
 
 var drumOnsets = new Object();
+var drumVelocities = new Object();
 
 /////////////////////////////////////////////////////////////
 
@@ -251,6 +252,8 @@ async function generatePattern(z1, z2, threshold, noise_range){
         // GV Missing here is to store the velocity for each onset
         let onsetIndices = sequence.map((value, index) => value > 0 ? index : undefined).filter(x => x !== undefined)
         drumOnsets[i] = onsetIndices
+        let onsetVelocities = onsetIndices.map(x => sequence[x])
+        drumVelocities[i] = onsetVelocities
       }
     //   Max.outlet("generated", 1);
     //   console.log("generated", 1);
@@ -314,6 +317,9 @@ async function generatePattern(z1, z2, threshold, noise_range){
 var kkPat = []
 var snPat = []
 var hhPat = []
+var kkVel = []
+var snVel = []
+var hhVel = []
 
 function latspaceRetriever (mouseX, mouseY) {
     generate(mouseX, 
@@ -323,8 +329,11 @@ function latspaceRetriever (mouseX, mouseY) {
     kkPat = drumOnsets[0];
     snPat = drumOnsets[1];
     hhPat = drumOnsets[2];
+    kkVel = drumVelocities[0];
+    snVel = drumVelocities[1];
+    hhVel = drumVelocities[2];
 }
 
-export { latspaceRetriever, kkPat, snPat, hhPat } 
+export { latspaceRetriever, kkPat, snPat, hhPat, kkVel, snVel, hhVel } 
 
 

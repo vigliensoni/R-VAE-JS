@@ -1,6 +1,6 @@
 // THIS FILE CREATES CONTROLS THE AUDIO CLOCK AND SAMPLES
 
-import { kkPat, snPat, hhPat } from "."
+import { kkPat, snPat, hhPat, kkVel, snVel, hhVel } from "."
 // import { canvas, isDrawing } from './canvas.js';
 import * as vis from "./visualization.js"
 // import { LOOP_DURATION } from "./constants";
@@ -49,7 +49,6 @@ const ticksperbeat = 12 // GV: why this is 12 and not 24?
 clock.setTempo(160) // Running at 160, though
 clock.setTicksPerBeat(ticksperbeat)
 
-// console.log('clock', clock)
 // declare variables for dial
 let thresholdValue = 0.25
 let noiseValue = 0
@@ -83,9 +82,6 @@ const tempo = new Nexus.Dial('#tempoDial', {
   value: tempoValue
 })
 
-
-// console.log(threshold)
-
 // INIT PATTERNS
 let kkMuted 
 let snMuted
@@ -93,50 +89,31 @@ let hhMuted
 let allMuted = false
 
 
-
-
-
-
-
-
-
 // when the play button is pressed...
 const playAudio = () => {
-  // arrange play button
-  // playButton.style.display = 'none'
   // start the audio engine
   maxiEngine.init()
 
-  // maxiEngine.loadSample('./audio/Kick 606 1.wav', kick)
   maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/kk-3.wav", kick);
   maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/sn-3.wav", snare);
   maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/hh-3.wav", hihat);
-  
-  // if (playButton.textContent === "PLAY") {
-  //   playButton.textContent = "STOP"
-  // } else {
-  //   playButton.textContent = "PLAY"
-  // }
-
 
   let w = 0;
   let tickCounter;
-  let beatCounter;
+  let kkAmp, snAmp, hhAmp;
+
+
   maxiEngine.play = function () {
     clock.ticker();
     if (clock.isTick()) {
-      // let beatCounter = clock.playHead % 7;
       tickCounter = clock.playHead % subdiv;
-      beatCounter = Math.floor(clock.playHead / subdiv);
-      // clockUI.innerHTML = (beatCounter + 1) + ' ' + Math.floor(tickCounter / ticksperbeat + 1) + ' ' + (tickCounter % ticksperbeat + 1) 
 
-      // console.log(tickCounter);
 
       vis.visualize(tickCounter - 1) // one tick before to be in sync
-
       if ((kkPat.indexOf(tickCounter)) >= 0) {
         if ((kkMuted !== true)) {
           kick.trigger()
+          kkAmp = kkVel[kkPat.indexOf(tickCounter)] / 127 // Onset Velocity, needs to be done to MIDI
           if (webmidi) { 
             WebMidi.outputs[0].playNote("C1"); // WebMidi not working on Firefox
             WebMidi.outputs[1].playNote("C1"); // WebMidi not working on Firefox
@@ -146,6 +123,7 @@ const playAudio = () => {
       if ((snPat.indexOf(tickCounter)) >= 0) {
         if ((snMuted !== true)) {
           snare.trigger()
+          snAmp = snVel[snPat.indexOf(tickCounter)] / 127
           if (webmidi)  {
             WebMidi.outputs[0].playNote("A1");
             WebMidi.outputs[1].playNote("A1");
@@ -155,6 +133,7 @@ const playAudio = () => {
       if ((hhPat.indexOf(tickCounter) >= 0)) {
         if ((hhMuted !== true)) {
           hihat.trigger()
+          hhAmp = hhVel[hhPat.indexOf(tickCounter)] / 127
           if (webmidi) { 
             WebMidi.outputs[0].playNote("G#1");
             WebMidi.outputs[1].playNote("G#1");
@@ -163,9 +142,9 @@ const playAudio = () => {
       }
     }
     
-    w = kick.playOnce() * 0.5
-    w += snare.playOnce() * 0.66
-    w += hihat.playOnce() * 0.250
+    w = kick.playOnce() * kkAmp
+    w += snare.playOnce() * snAmp
+    w += hihat.playOnce() * hhAmp
     return w
   }
 }
@@ -194,7 +173,7 @@ window.addEventListener("keydown", event => {
   if (event.key == "q" & allMuted == false) {
     kkMuted = true
     kickPatternbutton.style.background="#FF0000"
-    console.log('muted')
+    console.log(kkPat, kkVel)
   } else if (event.key == "w" & allMuted == false) {
     snMuted = true
     snarePatternbutton.style.background="#FF0000"
