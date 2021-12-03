@@ -127,7 +127,7 @@ function visualize(t) {
   ctx.putImageData(idata,0,0);
 }
 
-window.addEventListener("load", () => { visualize(0) }, false );
+// window.addEventListener("load", () => { visualize(0) }, false );
 
 // 
 // 1. Arreglar la matriz, no crear todo cada vez, crear un array de 96 idata
