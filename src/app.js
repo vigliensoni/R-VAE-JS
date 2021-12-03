@@ -53,6 +53,7 @@ clock.setTicksPerBeat(ticksperbeat)
 let thresholdValue = 0.25
 let noiseValue = 0
 let tempoValue = 160
+let volumeValue = 1.0
 
 // create dials
 const threshold = new Nexus.Dial('#thresholdDial', {
@@ -82,6 +83,15 @@ const tempo = new Nexus.Dial('#tempoDial', {
   value: tempoValue
 })
 
+const volume = new Nexus.Dial('#volumeDial', {
+  interaction: 'vertical',
+  mode: 'absolute',
+  min: 0,
+  max: 2,
+  step: 0.025,
+  value: volumeValue
+})
+
 // INIT PATTERNS
 let kkMuted 
 let snMuted
@@ -91,6 +101,7 @@ let allMuted = false
 
 // when the play button is pressed...
 const playAudio = () => {
+  
   // start the audio engine
   maxiEngine.init()
 
@@ -109,7 +120,7 @@ const playAudio = () => {
       tickCounter = clock.playHead % subdiv;
 
 
-      vis.visualize(tickCounter - 1) // one tick before to be in sync
+      vis.visualize(tickCounter) // one tick before to be in sync
       if ((kkPat.indexOf(tickCounter)) >= 0) {
         if ((kkMuted !== true)) {
           kick.trigger()
@@ -142,9 +153,9 @@ const playAudio = () => {
       }
     }
     
-    w = kick.playOnce() * kkAmp
-    w += snare.playOnce() * snAmp
-    w += hihat.playOnce() * hhAmp
+    w = kick.playOnce() * kkAmp * volumeValue
+    w += snare.playOnce() * snAmp * volumeValue
+    w += hihat.playOnce() * hhAmp * volumeValue
     return w
   }
 }
@@ -165,6 +176,9 @@ tempo.on('change', function(t) {
   clock.setTempo(tempoValue);
 })
 
+volume.on('change', function(t) {
+  volumeValue = t;
+})
 
 // BUTTON LISTENERS
 
