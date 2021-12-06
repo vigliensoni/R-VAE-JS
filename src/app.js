@@ -57,6 +57,7 @@ let volumeValue = 1.0
 
 // create dials
 const threshold = new Nexus.Dial('#thresholdDial', {
+  size: [50, 50],
   interaction: 'vertical',
   mode: 'absolute',
   min: 0.01,
@@ -66,6 +67,7 @@ const threshold = new Nexus.Dial('#thresholdDial', {
 })
 
 const noise = new Nexus.Dial('#noiseDial', {
+  size: [50, 50],
   interaction: 'vertical',
   mode: 'absolute',
   min: 0.00,
@@ -75,6 +77,7 @@ const noise = new Nexus.Dial('#noiseDial', {
 })
 
 const tempo = new Nexus.Dial('#tempoDial', {
+  size: [50, 50],
   interaction: 'vertical',
   mode: 'absolute',
   min: 60,
@@ -84,6 +87,7 @@ const tempo = new Nexus.Dial('#tempoDial', {
 })
 
 const volume = new Nexus.Dial('#volumeDial', {
+  size: [50, 50],
   interaction: 'vertical',
   mode: 'absolute',
   min: 0,

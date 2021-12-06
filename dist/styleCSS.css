@@ -43,11 +43,10 @@ button {
   background-color: transparent;
   color:#FFD12C;
   border:solid black 5px;
-  width:120px;
   padding:10px;
   margin:10px;
   font-family: 'Rubik';
-    font-size: 25px;
+    font-size: 15px;
 }
 
 button:hover {
@@ -62,12 +61,10 @@ button:hover {
 	padding-bottom:1px;
 }
 
-#header-wrapper {
-	position:relative;
-}
+
 
 .LSwrapper {
-  margin-top: -100px;
+  margin-top: -190px;
   display: flex;
   justify-content: center;
 }
@@ -193,3 +190,28 @@ a:hover{
   outline: rgb(30, 30, 30) 2px solid;
 }
 
+/* KNOBS */
+
+.outer-knobs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 70%;
+  color: white;
+  margin: 10px auto;
+  position: relative;
+  text-align:center;
+  top: -225px;
+}
+
+.knobs {
+  height: 100px;
+  width: 100px;
+  margin: 20px;
+}
+
+.knob-text {
+    margin-left: -5px;
+    font-size: 15px;
+    font: Rubik;
+}
