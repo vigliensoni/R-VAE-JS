@@ -78,9 +78,14 @@ function getMouse(e) {
 mouseCanvas.addEventListener('mousedown', e => {
     isDrawing = true;
     enableCall = false;
-    
+
+    mouseCanvasctx.fillStyle = "#00FF00"
+    mouseCanvasctx.beginPath();
+    mouseCanvasctx.arc(mouseXprevious*factor, mouseYprevious*factor, 10*factor, 0, 2*Math.PI);
+    mouseCanvasctx.fill();   
+
+
     mouseCanvasctx.fillStyle = "#FF0000"
-    
     mouseCanvasctx.beginPath();
     mouseCanvasctx.arc(e.layerX*factor, e.layerY*factor, 10*factor, 0, 2*Math.PI);
     mouseCanvasctx.fill();
@@ -116,12 +121,15 @@ mouseCanvas.addEventListener('mousemove', e => {
 
 mouseCanvas.addEventListener('mouseup', e => {
     // if (isDrawing === true) {
-        mouseCanvasctx.fillStyle = "#00FF00"
+        mouseCanvasctx.fillStyle = "#FF0000"
 
         mouseCanvasctx.beginPath();
         mouseCanvasctx.arc(e.layerX*factor, e.layerY*factor, 10*factor, 0, 2*Math.PI);
         mouseCanvasctx.fill();
-        
+
+        mouseXprevious = e.layerX;
+        mouseYprevious = e.layerY;
+
         setTimeout(() => enableCall = true, 100);
     // }
 });
