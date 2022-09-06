@@ -6,7 +6,7 @@
     <title>R-VAE-JS</title>
     <script src="libs/pace.min.js"></script>
     <link href="libs/pace-theme-center-atom.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Staatliches" rel="stylesheet" type="text/css">
 
     <script src="./libs/nexusUI.js" type="text/javascript"></script>
@@ -51,23 +51,18 @@
             <div id="clock"></div>
 
         </div>
-        <div id="mutes" class="center">
-            <button id="kickPatternbutton">Kk | Q</button>
-            <button id="snarePatternbutton">Sn | W</button>
-            <button id="hihatPatternbutton">Hh | E</button>
-            <button id="allmuteButton">All | R</button>
+        <div id="train" style = "font-size:10pt;" class="center">
+          <p>Lets train our model!</p>
+          <p>1. Open several MIDI files containing drum beats</p>
+          <p>2. Click Train</p>
+          <p>3. Wait for training to complete</p>
+
+          <label for="file-selector">Select some .mid files:</label>
+          <input type="file" id="file-selector" name="file-selector"  multiple="multiple">
+          <button id="trainButton">Train</button>
+          <p id = "num-files-label"></p>
+          <p id = "training-label"></p>
         </div>
-    </div><!-- wrapper -->
-    <!-- page-wrapper -->
-
-
-    <!-- <div class="spaceContainer">
-        <canvas class="box"></canvas>
-        <canvas class="box overlay"></canvas>
-      </div> -->
-
-
-
-    <script src="main.js" type="text/javascript"></script>
-</body>
+      </div>
+    </body>
 </html>
