@@ -52,8 +52,8 @@ function shuffle_with_indices(a, indices){
 
 
 function does_post(message, is_error){
-    if (is_error) Max.post(message, Max.POST_LEVELS.ERROR);
-    else Max.post(message);
+    // if (is_error) Max.post(message, Max.POST_LEVELS.ERROR);
+    // else Max.post(message);
 }
 
 function post(message){
@@ -65,7 +65,7 @@ function error(message){
 }
 
 function does_log_status(message, is_error){
-    Max.outlet(PREFIX_STATUS, message, is_error)
+    //Max.outlet(PREFIX_STATUS, message, is_error)
     post(message, is_error);
 }
 
@@ -76,7 +76,7 @@ function log_status(message){
 function error_status(message){
     does_log_status(message, 1);
 }
-  
+
 
 exports.create2DArray = create2DArray;
 exports.getRandomInt = getRandomInt;

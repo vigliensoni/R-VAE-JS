@@ -36,7 +36,7 @@ mouseCanvas.addEventListener('mousedown', e => {
     isDrawing = true;
     enableCall = false;
     getMouse(e);
-    // console.log("mouse down: " + e.layerX + ", " + e.layerY);
+    console.log("mouse down: " + e.layerX + ", " + e.layerY);
     // mouseCanvasctx.fillStyle = "#FF0000"
     // mouseCanvasctx.fillRect(e.layerX, e.layerY, 4, 4);
 
@@ -58,7 +58,7 @@ mouseCanvas.addEventListener('mousemove', e => {
         // console.log("mouse move: " + mouseX + ", " + mouseY);
         // mouseCanvasctx.fillStyle = "#00FF00"
         // mouseCanvasctx.fillRect(e.layerX, e.layerY, 4, 4);
-        
+
         latspaceRetriever(mouseX, mouseY);
         setTimeout(() => enableCall = true, 300);
     }
@@ -82,14 +82,14 @@ mouseCanvas.addEventListener('mousedown', e => {
     mouseCanvasctx.fillStyle = "#00FF00"
     mouseCanvasctx.beginPath();
     mouseCanvasctx.arc(mouseXprevious*factor, mouseYprevious*factor, 10*factor, 0, 2*Math.PI);
-    mouseCanvasctx.fill();   
+    mouseCanvasctx.fill();
 
 
     mouseCanvasctx.fillStyle = "#FF0000"
     mouseCanvasctx.beginPath();
     mouseCanvasctx.arc(e.layerX*factor, e.layerY*factor, 10*factor, 0, 2*Math.PI);
     mouseCanvasctx.fill();
-    
+
     mouseXprevious = e.layerX;
     mouseYprevious = e.layerY;
 
@@ -104,13 +104,13 @@ mouseCanvas.addEventListener('mousemove', e => {
         mouseCanvasctx.fillStyle = "#00FF00"
         mouseCanvasctx.beginPath();
         mouseCanvasctx.arc(mouseXprevious*factor, mouseYprevious*factor, 10*factor, 0, 2*Math.PI);
-        mouseCanvasctx.fill();        
-        
+        mouseCanvasctx.fill();
+
         mouseCanvasctx.fillStyle = "#FF0000"
         mouseCanvasctx.beginPath();
         mouseCanvasctx.arc(e.layerX*factor, e.layerY*factor, 10*factor, 0, 2*Math.PI);
         mouseCanvasctx.fill();
-        
+
         mouseXprevious = e.layerX;
         mouseYprevious = e.layerY;
 

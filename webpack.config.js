@@ -8,15 +8,12 @@ module.exports = {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
   },
-  node: {
-    fs: 'empty'
-  },
   mode: 'development',
   devtool: 'eval-source-map',
 };
 
 // module.exports = [
-//   "eval", 
+//   "eval",
 //   "eval-cheap-source-map"
 // ].map(devtool => ({
 //   mode: 'development',

@@ -43,7 +43,7 @@ var snare = new maxi.maxiSample()
 var hihat = new maxi.maxiSample()
 let clock = new maxi.maxiClock()
 
-// control sequencer 
+// control sequencer
 const subdiv = 96 // 4 * 24 -> 1 beat
 const ticksperbeat = 12 // GV: why this is 12 and not 24?
 clock.setTempo(160) // Running at 160, though
@@ -97,7 +97,7 @@ const volume = new Nexus.Dial('#volumeDial', {
 })
 
 // INIT PATTERNS
-let kkMuted 
+let kkMuted
 let snMuted
 let hhMuted
 let allMuted = false
@@ -105,7 +105,7 @@ let allMuted = false
 
 // when the play button is pressed...
 const playAudio = () => {
-  
+
   // start the audio engine
   maxiEngine.init()
 
@@ -129,7 +129,7 @@ const playAudio = () => {
         if ((kkMuted !== true)) {
           kick.trigger()
           kkAmp = kkVel[kkPat.indexOf(tickCounter)] / 127 // Onset Velocity, needs to be done to MIDI
-          if (webmidi) { 
+          if (webmidi) {
             WebMidi.outputs[0].playNote("C1"); // WebMidi not working on Firefox
             WebMidi.outputs[1].playNote("C1"); // WebMidi not working on Firefox
           }
@@ -149,14 +149,14 @@ const playAudio = () => {
         if ((hhMuted !== true)) {
           hihat.trigger()
           hhAmp = hhVel[hhPat.indexOf(tickCounter)] / 127
-          if (webmidi) { 
+          if (webmidi) {
             WebMidi.outputs[0].playNote("G#1");
             WebMidi.outputs[1].playNote("G#1");
           }
         }
       }
     }
-    
+
     w = kick.playOnce() * kkAmp * volumeValue
     w += snare.playOnce() * snAmp * volumeValue
     w += hihat.playOnce() * hhAmp * volumeValue
@@ -191,7 +191,6 @@ window.addEventListener("keydown", event => {
   if (event.key == "q" & allMuted == false) {
     kkMuted = true
     kickPatternbutton.style.background="#FF0000"
-    console.log(kkPat, kkVel)
   } else if (event.key == "w" & allMuted == false) {
     snMuted = true
     snarePatternbutton.style.background="#FF0000"
@@ -211,7 +210,7 @@ window.addEventListener("keydown", event => {
     hhMuted = false
     allmuteButton.style.background="#000000"
     allmuteButton.style.color="#FFD12C"
-    
+
   }
 })
 
@@ -226,7 +225,7 @@ window.addEventListener("keyup", event => {
   } else if (event.key == "e" & allMuted == false) {
     hhMuted = false
     hihatPatternbutton.style.background="#000000"
-  } 
+  }
 })
 
 // CLICK ON MUTE BUTTONS
@@ -239,6 +238,7 @@ kickPatternbutton.addEventListener('mousedown', () => {
     kickPatternbutton.style.background="#000000"
   }
 })
+
 
 snarePatternbutton.addEventListener('mousedown', () => {
   if ( snMuted == false ) {
@@ -283,7 +283,7 @@ window.addEventListener("keydown", event => {
     maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%20606%201.wav", kick);
     maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Rim%207T8.wav", snare);
     maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%201.wav", hihat);
-    
+
   } else if (event.key == "2" ) {
     maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%207T8.wav", kick);
     maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Snare%207T8.wav", snare);
@@ -310,27 +310,4 @@ function randomPattern () {
 
 
 
-
-// function chooseModel(){
-//   let modelURL = MODELS_LS_DATA[this.value]['model-url']
-//   let spaceURL = MODELS_LS_DATA[this.value]['space-url']
-//   vae.loadModel(modelURL)
-//   console.log(modelURL, spaceURL)
-// }
-
-// document.getElementById("model").onchange = chooseModel
-
-
-
-
-
-
-
-// playButton.addEventListener('click', () => {
-//   playAudio()
-// })
-playAudio()
-
-
 export { playAudio, thresholdValue, noiseValue }
-
