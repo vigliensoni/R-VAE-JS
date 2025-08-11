@@ -140,8 +140,8 @@ const playAudio = () => {
           snare.trigger()
           snAmp = snVel[snPat.indexOf(tickCounter)] / 127
           if (webmidi)  {
-            WebMidi.outputs[0].playNote("A1");
-            WebMidi.outputs[1].playNote("A1");
+            WebMidi.outputs[0].playNote("C#1");
+            WebMidi.outputs[1].playNote("C#1");
           }
         }
       }
@@ -150,8 +150,8 @@ const playAudio = () => {
           hihat.trigger()
           hhAmp = hhVel[hhPat.indexOf(tickCounter)] / 127
           if (webmidi) { 
-            WebMidi.outputs[0].playNote("G#1");
-            WebMidi.outputs[1].playNote("G#1");
+            WebMidi.outputs[0].playNote("D1");
+            WebMidi.outputs[1].playNote("D1");
           }
         }
       }
