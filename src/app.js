@@ -3,7 +3,7 @@
 import { kkPat, snPat, hhPat, kkVel, snVel, hhVel } from "."
 import * as vis from "./visualization.js"
 import { latspaceRetriever } from '.';
-import { mouseX as lsX, mouseY as lsY } from './canvas.js';
+import { mouseX as lsX, mouseY as lsY, markDecodeAt } from './canvas.js'
 
 // UI
 const kickPatternbutton = document.getElementById('kickPatternbutton')
@@ -35,7 +35,7 @@ const hihat = new maxi.maxiSample()
 const clock = new maxi.maxiClock()
 
 // CLOCK
-const SUBDIV = 96 // 4 * 24 -> 1 beat
+const SUBDIV = 96
 const TICKS_PER_BEAT = 12
 clock.setTempo(160)
 clock.setTicksPerBeat(TICKS_PER_BEAT)
@@ -52,31 +52,68 @@ const noiseDial = new Nexus.Dial('#noiseDial',   { size:[50,50], interaction:'ve
 const tempoDial = new Nexus.Dial('#tempoDial',   { size:[50,50], interaction:'vertical', mode:'absolute', min:60,   max:200,  step:5,    value:tempoValue })
 const volumeDial= new Nexus.Dial('#volumeDial',  { size:[50,50], interaction:'vertical', mode:'absolute', min:0,    max:2,    step:0.025,value:volumeValue })
 
-// sync initial value to visualizer
+// sync threshold with visualizer
 vis.setVisibilityThreshold(thresholdValue)
-
-// handlers and throttle so we trigger at most once per animation frame while dragging
-let thrRAF = 0;
-const triggerFromThreshold = () => {
-  const x = Number.isFinite(lsX) ? lsX : 0; // fallback to center if undefined
-  const y = Number.isFinite(lsY) ? lsY : 0;
-  latspaceRetriever(x, y);
-};
-
 threshold.on('change', v => {
-  thresholdValue = v;
-  vis.setVisibilityThreshold(v);
+  thresholdValue = v
+  vis.setVisibilityThreshold(v)
+  triggerFromLatent(lsX, lsY) // trigger sound when moving threshold
+})
 
-  if (!thrRAF) {
-    thrRAF = requestAnimationFrame(() => {
-      thrRAF = 0;
-      triggerFromThreshold();
-    });
-  }
-});
-noiseDial.on('change',   v => noiseValue = v)
+noiseDial.on('change', v => {
+  noiseValue = v
+  if (noiseValue > 0) startNoiseWander()
+  else stopNoiseWander()
+})
+
+// other dials
 tempoDial.on('change',   v => { tempoValue = v; clock.setTempo(tempoValue) })
 volumeDial.on('change',  v => { volumeValue = v })
+
+// Helper to trigger decode/play from latent coords
+function triggerFromLatent(x, y) {
+  const cx = Number.isFinite(x) ? x : 0
+  const cy = Number.isFinite(y) ? y : 0
+  markDecodeAt(cx, cy)
+  latspaceRetriever(cx, cy)
+}
+
+// Noise wander settings
+const MAX_RADIUS = 3
+const LIMIT = 3
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v))
+
+function sampleInDisk(R) {
+  const u = Math.random()
+  const v = Math.random()
+  const r = R * Math.sqrt(u)
+  const a = 2 * Math.PI * v
+  return [r * Math.cos(a), r * Math.sin(a)]
+}
+
+let noiseTimer = null
+const NOISE_INTERVAL_MS = 120
+
+function startNoiseWander() {
+  if (noiseTimer) return
+  noiseTimer = setInterval(() => {
+    if (noiseValue <= 0) return
+    const cx = Number.isFinite(lsX) ? lsX : 0
+    const cy = Number.isFinite(lsY) ? lsY : 0
+    const [dx, dy] = sampleInDisk(noiseValue * MAX_RADIUS)
+    const x = clamp(cx + dx, -LIMIT, LIMIT)
+    const y = clamp(cy + dy, -LIMIT, LIMIT)
+    markDecodeAt(x, y)
+    latspaceRetriever(x, y)
+  }, NOISE_INTERVAL_MS)
+}
+
+function stopNoiseWander() {
+  if (noiseTimer) {
+    clearInterval(noiseTimer)
+    noiseTimer = null
+  }
+}
 
 // MUTE STATE
 let kkMuted = false
@@ -149,9 +186,8 @@ const playAudio = () => {
     clock.ticker()
     if (clock.isTick()) {
       const tick = clock.playHead % SUBDIV
-      vis.visualize(tick) // one tick before to be in sync
+      vis.visualize(tick)
 
-      // Kick
       const kIdx = kkPat.indexOf(tick)
       if (kIdx >= 0 && !kkMuted && !allMuted) {
         kick.trigger()
@@ -159,7 +195,6 @@ const playAudio = () => {
         sendToAll("C1")
       }
 
-      // Snare
       const sIdx = snPat.indexOf(tick)
       if (sIdx >= 0 && !snMuted && !allMuted) {
         snare.trigger()
@@ -167,7 +202,6 @@ const playAudio = () => {
         sendToAll("C#1")
       }
 
-      // Hi-hat
       const hIdx = hhPat.indexOf(tick)
       if (hIdx >= 0 && !hhMuted && !allMuted) {
         hihat.trigger()
@@ -204,13 +238,10 @@ allmuteButton.addEventListener('mousedown', () => setAllMutes(!allMuted))
 // KEYBOARD
 window.addEventListener("keydown", (e) => {
   switch (e.key) {
-    // hold-to-mute (only if not all-muted)
     case "q": if (!allMuted) { kkMuted = true; setButton(kickPatternbutton, true) } break
     case "w": if (!allMuted) { snMuted = true; setButton(snarePatternbutton, true) } break
     case "e": if (!allMuted) { hhMuted = true; setButton(hihatPatternbutton, true) } break
-    // toggle all mute
     case "r": setAllMutes(!allMuted); break
-    // kits 1..3
     case "1": loadKit(0); break
     case "2": loadKit(1); break
     case "3": loadKit(2); break
@@ -226,7 +257,7 @@ window.addEventListener("keyup", (e) => {
   }
 })
 
-// Utils (unused but kept)
+// Utils
 function randomNumber(n = 16) { return Math.floor(n * Math.random()) }
 function randomPattern() {
   const rp = []
