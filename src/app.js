@@ -1,340 +1,214 @@
-// THIS FILE CREATES CONTROLS THE AUDIO CLOCK AND SAMPLES
+// AUDIO CLOCK + SAMPLES (optimized)
 
 import { kkPat, snPat, hhPat, kkVel, snVel, hhVel } from "."
-// import { canvas, isDrawing } from './canvas.js';
 import * as vis from "./visualization.js"
-// import { LOOP_DURATION } from "./constants";
-// import * as vae from './vae.js'
-// import { MODELS_LS_DATA } from './constants.js'
 
-
-// const playButton = document.getElementById('goButton')
-// const clockUI = document.getElementById('clock')
+// UI
 const kickPatternbutton = document.getElementById('kickPatternbutton')
 const snarePatternbutton = document.getElementById('snarePatternbutton')
 const hihatPatternbutton = document.getElementById('hihatPatternbutton')
 const allmuteButton = document.getElementById('allmuteButton')
-let number_of_MIDI_outputs = 0;
 
-let webmidi;
+// WEBMIDI
+let webmidi = false
+let number_of_MIDI_outputs = 0
 
-// loading WebMIDI
-WebMidi.enable(function (err) {
+WebMidi.enable(err => {
   if (err) {
     console.log("WebMidi could not be enabled.", err)
-    webmidi = false;
-  } else {
-    console.log("WebMidi enabled!")
-    console.log("WebMidi Outputs: ", WebMidi.outputs)
-    number_of_MIDI_outputs = WebMidi.outputs.length;
-    webmidi = true;
+    webmidi = false
+    return
   }
-});
+  console.log("WebMidi enabled!")
+  number_of_MIDI_outputs = WebMidi.outputs.length
+  webmidi = true
+})
 
+// MAXI
+const maxi = maximilian()
+const maxiEngine = new maxi.maxiAudio()
+const kick = new maxi.maxiSample()
+const snare = new maxi.maxiSample()
+const hihat = new maxi.maxiSample()
+const clock = new maxi.maxiClock()
 
-// create a maximilian object
-var maxi = maximilian()
+// CLOCK
+const SUBDIV = 96 // 4 * 24 -> 1 beat
+const TICKS_PER_BEAT = 12
+clock.setTempo(160)
+clock.setTicksPerBeat(TICKS_PER_BEAT)
 
-// create an audio engine
-var maxiEngine = new maxi.maxiAudio()
-
-// create two oscillators
-var kick = new maxi.maxiSample()
-var snare = new maxi.maxiSample()
-var hihat = new maxi.maxiSample()
-let clock = new maxi.maxiClock()
-
-// control sequencer 
-const subdiv = 96 // 4 * 24 -> 1 beat
-const ticksperbeat = 12 // GV: why this is 12 and not 24?
-clock.setTempo(160) // Running at 160, though
-clock.setTicksPerBeat(ticksperbeat)
-
-// declare variables for dial
+// DIAL STATE
 let thresholdValue = 0.25
 let noiseValue = 0
 let tempoValue = 160
 let volumeValue = 1.0
 
-// create dials
-const threshold = new Nexus.Dial('#thresholdDial', {
-  size: [50, 50],
-  interaction: 'vertical',
-  mode: 'absolute',
-  min: 0.01,
-  max: 0.99,
-  step: 0.01,
-  value: thresholdValue
-})
+// DIALS
+const threshold = new Nexus.Dial('#thresholdDial', { size:[50,50], interaction:'vertical', mode:'absolute', min:0.01, max:0.99, step:0.01, value:thresholdValue })
+const noiseDial = new Nexus.Dial('#noiseDial',   { size:[50,50], interaction:'vertical', mode:'absolute', min:0.00, max:1.0,  step:0.01, value:noiseValue })
+const tempoDial = new Nexus.Dial('#tempoDial',   { size:[50,50], interaction:'vertical', mode:'absolute', min:60,   max:200,  step:5,    value:tempoValue })
+const volumeDial= new Nexus.Dial('#volumeDial',  { size:[50,50], interaction:'vertical', mode:'absolute', min:0,    max:2,    step:0.025,value:volumeValue })
 
-const noise = new Nexus.Dial('#noiseDial', {
-  size: [50, 50],
-  interaction: 'vertical',
-  mode: 'absolute',
-  min: 0.00,
-  max: 1.0,
-  step: 0.01,
-  value: noiseValue
-})
+threshold.on('change', v => thresholdValue = v)
+noiseDial.on('change',   v => noiseValue = v)
+tempoDial.on('change',   v => { tempoValue = v; clock.setTempo(tempoValue) })
+volumeDial.on('change',  v => { volumeValue = v })
 
-const tempo = new Nexus.Dial('#tempoDial', {
-  size: [50, 50],
-  interaction: 'vertical',
-  mode: 'absolute',
-  min: 60,
-  max: 200,
-  step: 5,
-  value: tempoValue
-})
-
-const volume = new Nexus.Dial('#volumeDial', {
-  size: [50, 50],
-  interaction: 'vertical',
-  mode: 'absolute',
-  min: 0,
-  max: 2,
-  step: 0.025,
-  value: volumeValue
-})
-
-// INIT PATTERNS
-let kkMuted 
-let snMuted
-let hhMuted
+// MUTE STATE
+let kkMuted = false
+let snMuted = false
+let hhMuted = false
 let allMuted = false
 
+const setButton = (el, active) => {
+  el.style.background = active ? "#FF0000" : "#000000"
+  if (el === allmuteButton) el.style.color = active ? "#000000" : "#FFD12C"
+}
 
-// when the play button is pressed...
+const setAllMutes = (muted) => {
+  allMuted = muted
+  kkMuted = snMuted = hhMuted = muted
+  setButton(kickPatternbutton, muted)
+  setButton(snarePatternbutton, muted)
+  setButton(hihatPatternbutton, muted)
+  setButton(allmuteButton, muted)
+}
+
+// MIDI HELPERS
+const MIDI_CH = 10
+const sendToAll = (note, dur = 100) => {
+  if (!webmidi || number_of_MIDI_outputs === 0) return
+  for (let i = 0; i < number_of_MIDI_outputs; i++) {
+    const out = WebMidi.outputs[i]
+    if (out && typeof out.playNote === "function") {
+      try { out.playNote(note, MIDI_CH, { duration: dur }) }
+      catch (e) { console.warn(`Output ${i} (${out.name}) skipped:`, e) }
+    }
+  }
+}
+
+// KITS
+const KITS = [
+  {
+    kk: "https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%20606%201.wav",
+    sn: "https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Rim%207T8.wav",
+    hh: "https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%201.wav",
+  },
+  {
+    kk: "https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%207T8.wav",
+    sn: "https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Snare%207T8.wav",
+    hh: "https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%20Absynth%203.wav",
+  },
+  {
+    kk: "https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/kk-3.wav",
+    sn: "https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/sn-3.wav",
+    hh: "https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/hh-3.wav",
+  },
+]
+
+const loadKit = (idx) => {
+  const kit = KITS[idx]
+  if (!kit) return
+  maxiEngine.loadSample(kit.kk, kick)
+  maxiEngine.loadSample(kit.sn, snare)
+  maxiEngine.loadSample(kit.hh, hihat)
+}
+
+// AUDIO ENGINE
 const playAudio = () => {
-  
-  // start the audio engine
   maxiEngine.init()
+  loadKit(2) // default kit
 
-  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/kk-3.wav", kick);
-  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/sn-3.wav", snare);
-  maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/hh-3.wav", hihat);
-
-  let w = 0;
-  let tickCounter;
-  let kkAmp, snAmp, hhAmp;
-
+  let kkAmp = 0, snAmp = 0, hhAmp = 0
 
   maxiEngine.play = function () {
-    clock.ticker();
+    clock.ticker()
     if (clock.isTick()) {
-      tickCounter = clock.playHead % subdiv;
+      const tick = clock.playHead % SUBDIV
+      vis.visualize(tick) // one tick before to be in sync
 
-
-      vis.visualize(tickCounter) // one tick before to be in sync
-      if ((kkPat.indexOf(tickCounter)) >= 0) {
-        if ((kkMuted !== true)) {
-          kick.trigger()
-          kkAmp = kkVel[kkPat.indexOf(tickCounter)] / 127 // Onset Velocity, needs to be done to MIDI
-          if (webmidi) { 
-              for (let i = 0; i < number_of_MIDI_outputs; i++) {
-                WebMidi.outputs[i].playNote("C1", 10, { duration: 100 });
-              }
-            }
-          }
-        }
-      if ((snPat.indexOf(tickCounter)) >= 0) {
-        if ((snMuted !== true)) {
-          snare.trigger()
-          snAmp = snVel[snPat.indexOf(tickCounter)] / 127
-          if (webmidi) { 
-              for (let i = 0; i < number_of_MIDI_outputs; i++) {
-                WebMidi.outputs[i].playNote("C#1", 10, { duration: 100 });
-              }
-            }
-          }
-        }
-      if ((hhPat.indexOf(tickCounter) >= 0)) {
-        if ((hhMuted !== true)) {
-          hihat.trigger()
-          hhAmp = hhVel[hhPat.indexOf(tickCounter)] / 127
-          if (webmidi) { 
-              for (let i = 0; i < number_of_MIDI_outputs; i++) {
-                WebMidi.outputs[i].playNote("D1", 10, { duration: 100 });
-              }
-            }
-          }
-        }
+      // Kick
+      const kIdx = kkPat.indexOf(tick)
+      if (kIdx >= 0 && !kkMuted && !allMuted) {
+        kick.trigger()
+        kkAmp = (kkVel[kIdx] || 127) / 127
+        sendToAll("C1")
       }
-    
-    w = kick.playOnce() * kkAmp * volumeValue
+
+      // Snare
+      const sIdx = snPat.indexOf(tick)
+      if (sIdx >= 0 && !snMuted && !allMuted) {
+        snare.trigger()
+        snAmp = (snVel[sIdx] || 127) / 127
+        sendToAll("C#1")
+      }
+
+      // Hi-hat
+      const hIdx = hhPat.indexOf(tick)
+      if (hIdx >= 0 && !hhMuted && !allMuted) {
+        hihat.trigger()
+        hhAmp = (hhVel[hIdx] || 127) / 127
+        sendToAll("D1")
+      }
+    }
+
+    let w = 0
+    w += kick.playOnce()  * kkAmp * volumeValue
     w += snare.playOnce() * snAmp * volumeValue
-    w += hihat.playOnce() * hhAmp * volumeValue
+    w += hihat.playOnce()* hhAmp * volumeValue
     return w
   }
 }
 
+playAudio()
 
-
-// dials
-threshold.on('change', function(t) {
-  thresholdValue = t
-})
-
-noise.on('change', function(n) {
-  noiseValue = n
-})
-
-tempo.on('change', function(t) {
-  tempoValue = t;
-  clock.setTempo(tempoValue);
-})
-
-volume.on('change', function(t) {
-  volumeValue = t;
-})
-
-// BUTTON LISTENERS
-
-// MUTE BUTTONS ON
-window.addEventListener("keydown", event => {
-  if (event.key == "q" & allMuted == false) {
-    kkMuted = true
-    kickPatternbutton.style.background="#FF0000"
-    console.log(kkPat, kkVel)
-  } else if (event.key == "w" & allMuted == false) {
-    snMuted = true
-    snarePatternbutton.style.background="#FF0000"
-  } else if (event.key == "e" & allMuted == false) {
-    hhMuted = true
-    hihatPatternbutton.style.background="#FF0000"
-  } else if (event.key == "r" & allMuted == false ) {
-    allMuted = true
-    kkMuted = true
-    snMuted = true
-    hhMuted = true
-    allmuteButton.style.background="#FF0000"
-  } else if (event.key == "r" & allMuted == true ) {
-    allMuted = false
-    kkMuted = false
-    snMuted = false
-    hhMuted = false
-    allmuteButton.style.background="#000000"
-    allmuteButton.style.color="#FFD12C"
-    
-  }
-})
-
-// MUTE BUTTONS OFF
-window.addEventListener("keyup", event => {
-  if (event.key == "q" & allMuted == false) {
-    kkMuted = false
-    kickPatternbutton.style.background="#000000"
-  } else if (event.key == "w" & allMuted == false) {
-    snMuted = false
-    snarePatternbutton.style.background="#000000"
-  } else if (event.key == "e" & allMuted == false) {
-    hhMuted = false
-    hihatPatternbutton.style.background="#000000"
-  } 
-})
-
-// CLICK ON MUTE BUTTONS
+// BUTTON CLICKS
 kickPatternbutton.addEventListener('mousedown', () => {
-  if ( kkMuted == false ) {
-    kkMuted = true
-    kickPatternbutton.style.background="#FF0000"
-  } else if ( kkMuted == true ) {
-    kkMuted = false
-    kickPatternbutton.style.background="#000000"
-  }
+  kkMuted = !kkMuted
+  setButton(kickPatternbutton, kkMuted)
 })
-
 snarePatternbutton.addEventListener('mousedown', () => {
-  if ( snMuted == false ) {
-    snMuted = true
-    snarePatternbutton.style.background="#FF0000"
-  } else if ( snMuted == true ) {
-    snMuted = false
-    snarePatternbutton.style.background="#000000"
-  }
+  snMuted = !snMuted
+  setButton(snarePatternbutton, snMuted)
 })
-
 hihatPatternbutton.addEventListener('mousedown', () => {
-  if ( hhMuted == false ) {
-    hhMuted = true
-    hihatPatternbutton.style.background="#FF0000"
-  } else if ( hhMuted == true ) {
-    hhMuted = false
-    hihatPatternbutton.style.background="#000000"
+  hhMuted = !hhMuted
+  setButton(hihatPatternbutton, hhMuted)
+})
+allmuteButton.addEventListener('mousedown', () => setAllMutes(!allMuted))
+
+// KEYBOARD
+window.addEventListener("keydown", (e) => {
+  switch (e.key) {
+    // hold-to-mute (only if not all-muted)
+    case "q": if (!allMuted) { kkMuted = true; setButton(kickPatternbutton, true) } break
+    case "w": if (!allMuted) { snMuted = true; setButton(snarePatternbutton, true) } break
+    case "e": if (!allMuted) { hhMuted = true; setButton(hihatPatternbutton, true) } break
+    // toggle all mute
+    case "r": setAllMutes(!allMuted); break
+    // kits 1..3
+    case "1": loadKit(0); break
+    case "2": loadKit(1); break
+    case "3": loadKit(2); break
   }
 })
 
-// CLICK ON SOUND OFF
-allmuteButton.addEventListener('mousedown', () => {
-  if (allMuted == true ) {
-    allMuted = false
-    kkMuted = false
-    snMuted = false
-    hhMuted = false
-    allmuteButton.style.background="#000000"
-  } else if (allMuted == false ) {
-    allMuted = true
-    kkMuted = true
-    snMuted = true
-    hhMuted = true
-    allmuteButton.style.background="#FF0000"
+window.addEventListener("keyup", (e) => {
+  if (allMuted) return
+  switch (e.key) {
+    case "q": kkMuted = false; setButton(kickPatternbutton, false); break
+    case "w": snMuted = false; setButton(snarePatternbutton, false); break
+    case "e": hhMuted = false; setButton(hihatPatternbutton, false); break
   }
 })
 
-// MUTE BUTTONS ON
-window.addEventListener("keydown", event => {
-  if (event.key == "1" ) {
-    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%20606%201.wav", kick);
-    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Rim%207T8.wav", snare);
-    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%201.wav", hihat);
-    
-  } else if (event.key == "2" ) {
-    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Kick%207T8.wav", kick);
-    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/Snare%207T8.wav", snare);
-    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/ClosedHH%20Absynth%203.wav", hihat);
-  } else if (event.key == "3" ) {
-    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/kk-3.wav", kick);
-    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/sn-3.wav", snare);
-    maxiEngine.loadSample("https://raw.githubusercontent.com/vigliensoni/drum-sample-random-sequencer/master/audio/hh-3.wav", hihat);
-  }
-})
-
-
-function randomNumber (n = 16) {
-  return Math.floor(n * Math.random())
-}
-
-function randomPattern () {
+// Utils (unused but kept)
+function randomNumber(n = 16) { return Math.floor(n * Math.random()) }
+function randomPattern() {
   const rp = []
-  for (let i = 0; i < randomNumber(16); i++) {
-    rp.push(6 * randomNumber(16))
-  }
+  for (let i = 0; i < randomNumber(16); i++) rp.push(6 * randomNumber(16))
   return rp
 }
 
-
-
-
-// function chooseModel(){
-//   let modelURL = MODELS_LS_DATA[this.value]['model-url']
-//   let spaceURL = MODELS_LS_DATA[this.value]['space-url']
-//   vae.loadModel(modelURL)
-//   console.log(modelURL, spaceURL)
-// }
-
-// document.getElementById("model").onchange = chooseModel
-
-
-
-
-
-
-
-// playButton.addEventListener('click', () => {
-//   playAudio()
-// })
-playAudio()
-
-
 export { playAudio, thresholdValue, noiseValue }
-
