@@ -130,8 +130,8 @@ const playAudio = () => {
           kick.trigger()
           kkAmp = kkVel[kkPat.indexOf(tickCounter)] / 127 // Onset Velocity, needs to be done to MIDI
           if (webmidi) { 
-            WebMidi.outputs[0].playNote("C1"); // WebMidi not working on Firefox
-            WebMidi.outputs[1].playNote("C1"); // WebMidi not working on Firefox
+            WebMidi.outputs[0].playNote("C1", 10, { duration: 100 }); // WebMidi not working on Firefox
+            WebMidi.outputs[1].playNote("C1", 10, { duration: 100 }); // WebMidi not working on Firefox
           }
         }
       }
@@ -140,8 +140,8 @@ const playAudio = () => {
           snare.trigger()
           snAmp = snVel[snPat.indexOf(tickCounter)] / 127
           if (webmidi)  {
-            WebMidi.outputs[0].playNote("C#1");
-            WebMidi.outputs[1].playNote("C#1");
+            WebMidi.outputs[0].playNote("C#1", 10, { duration: 100 });
+            WebMidi.outputs[1].playNote("C#1", 10, { duration: 100 });
           }
         }
       }
@@ -150,8 +150,8 @@ const playAudio = () => {
           hihat.trigger()
           hhAmp = hhVel[hhPat.indexOf(tickCounter)] / 127
           if (webmidi) { 
-            WebMidi.outputs[0].playNote("D1");
-            WebMidi.outputs[1].playNote("D1");
+            WebMidi.outputs[0].playNote("D1", 10, { duration: 100 });
+            WebMidi.outputs[1].playNote("D1", 10, { duration: 100 });
           }
         }
       }
