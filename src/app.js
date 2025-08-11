@@ -2,6 +2,8 @@
 
 import { kkPat, snPat, hhPat, kkVel, snVel, hhVel } from "."
 import * as vis from "./visualization.js"
+import { latspaceRetriever } from '.';
+import { mouseX as lsX, mouseY as lsY } from './canvas.js';
 
 // UI
 const kickPatternbutton = document.getElementById('kickPatternbutton')
@@ -53,11 +55,25 @@ const volumeDial= new Nexus.Dial('#volumeDial',  { size:[50,50], interaction:'ve
 // sync initial value to visualizer
 vis.setVisibilityThreshold(thresholdValue)
 
-// handlers
+// handlers and throttle so we trigger at most once per animation frame while dragging
+let thrRAF = 0;
+const triggerFromThreshold = () => {
+  const x = Number.isFinite(lsX) ? lsX : 0; // fallback to center if undefined
+  const y = Number.isFinite(lsY) ? lsY : 0;
+  latspaceRetriever(x, y);
+};
+
 threshold.on('change', v => {
-  thresholdValue = v
-  vis.setVisibilityThreshold(v)
-})
+  thresholdValue = v;
+  vis.setVisibilityThreshold(v);
+
+  if (!thrRAF) {
+    thrRAF = requestAnimationFrame(() => {
+      thrRAF = 0;
+      triggerFromThreshold();
+    });
+  }
+});
 noiseDial.on('change',   v => noiseValue = v)
 tempoDial.on('change',   v => { tempoValue = v; clock.setTempo(tempoValue) })
 volumeDial.on('change',  v => { volumeValue = v })
