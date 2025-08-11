@@ -14,7 +14,7 @@ const kickPatternbutton = document.getElementById('kickPatternbutton')
 const snarePatternbutton = document.getElementById('snarePatternbutton')
 const hihatPatternbutton = document.getElementById('hihatPatternbutton')
 const allmuteButton = document.getElementById('allmuteButton')
-
+let number_of_MIDI_outputs = 0;
 
 let webmidi;
 
@@ -26,6 +26,7 @@ WebMidi.enable(function (err) {
   } else {
     console.log("WebMidi enabled!")
     console.log("WebMidi Outputs: ", WebMidi.outputs)
+    number_of_MIDI_outputs = WebMidi.outputs.length;
     webmidi = true;
   }
 });
@@ -130,32 +131,35 @@ const playAudio = () => {
           kick.trigger()
           kkAmp = kkVel[kkPat.indexOf(tickCounter)] / 127 // Onset Velocity, needs to be done to MIDI
           if (webmidi) { 
-            WebMidi.outputs[0].playNote("C1", 10, { duration: 100 }); // WebMidi not working on Firefox
-            WebMidi.outputs[1].playNote("C1", 10, { duration: 100 }); // WebMidi not working on Firefox
+              for (let i = 0; i < number_of_MIDI_outputs; i++) {
+                WebMidi.outputs[i].playNote("C1", 10, { duration: 100 });
+              }
+            }
           }
         }
-      }
       if ((snPat.indexOf(tickCounter)) >= 0) {
         if ((snMuted !== true)) {
           snare.trigger()
           snAmp = snVel[snPat.indexOf(tickCounter)] / 127
-          if (webmidi)  {
-            WebMidi.outputs[0].playNote("C#1", 10, { duration: 100 });
-            WebMidi.outputs[1].playNote("C#1", 10, { duration: 100 });
+          if (webmidi) { 
+              for (let i = 0; i < number_of_MIDI_outputs; i++) {
+                WebMidi.outputs[i].playNote("C#1", 10, { duration: 100 });
+              }
+            }
           }
         }
-      }
       if ((hhPat.indexOf(tickCounter) >= 0)) {
         if ((hhMuted !== true)) {
           hihat.trigger()
           hhAmp = hhVel[hhPat.indexOf(tickCounter)] / 127
           if (webmidi) { 
-            WebMidi.outputs[0].playNote("D1", 10, { duration: 100 });
-            WebMidi.outputs[1].playNote("D1", 10, { duration: 100 });
+              for (let i = 0; i < number_of_MIDI_outputs; i++) {
+                WebMidi.outputs[i].playNote("D1", 10, { duration: 100 });
+              }
+            }
           }
         }
       }
-    }
     
     w = kick.playOnce() * kkAmp * volumeValue
     w += snare.playOnce() * snAmp * volumeValue
