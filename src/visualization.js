@@ -1,137 +1,116 @@
+// visualization.js
 import { MODELS_LS_DATA } from './constants.js';
 import { ROWS, COLS, LOOP_DURATION, NUM_DRUM_CLASSES, Px } from './constants.js';
 import { canvas } from './canvas.js';
 
-const INST_SIDE = Math.sqrt(NUM_DRUM_CLASSES) // 3 - SIDE OF THE INSTRUMENT CUBE
+const INST_SIDE = Math.sqrt(NUM_DRUM_CLASSES);
+const W = COLS * INST_SIDE * Px;
+const H = ROWS * INST_SIDE * Px;
 
+let threshold = 0.25;                  // just a variable; no rebuilds
+export const setVisibilityThreshold = v => { threshold = Math.min(1, Math.max(0, v)); };
 
+let rgbFrames = new Array(LOOP_DURATION);   // Uint8ClampedArray (W*H*3) per frame
+let valFrames = new Array(LOOP_DURATION);   // Float32Array       (W*H)   per frame
 
-// CREATING AN LS MATRIX
-// one onset for each instrument at t = 0
-const matLength = NUM_DRUM_CLASSES * LOOP_DURATION * COLS * ROWS
-const LSMatrix = new Float32Array(matLength) 
+const ctx = canvas.getContext('2d');
+canvas.width = W; canvas.height = H;
+const idata = ctx.createImageData(W, H);
 
-// SYNTHETIC DATA
-// function createSynthData(r, c, i, t) {
-//   LSMatrix[(r * COLS * NUM_DRUM_CLASSES * LOOP_DURATION) + (c * NUM_DRUM_CLASSES * LOOP_DURATION) + (i * LOOP_DURATION) + t] = 1 // R 1st
-// }
+// Build per-frame RGB + values once
+(async () => {
+  const url = MODELS_LS_DATA['trap']['space-url'];
+  const buf = await fetch(url).then(r => r.arrayBuffer());
+  const LSMatrix = new Float32Array(buf);
 
-// for (let row = 0; row < ROWS; row++ ){
-//   for (let col = 0; col < COLS; col++ ){
-//     for (let inst = 0; inst < NUM_DRUM_CLASSES; inst++){
-//       for (let time = 0; time < LOOP_DURATION; time++){
-//         createSynthData(row, col, inst, time)
-//       }
-//     }
-//   }
-// }
-
-let matrix3 = new Uint8ClampedArray(ROWS * INST_SIDE * COLS * INST_SIDE * LOOP_DURATION * Px * Px * 4)
-
-// LOADING DATA FOR VISUALIZATION
-
-// FOOTWORK
-// let url = "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/footwork-model/model-matrix-LS.data"
-
-// TRAP
-let spaceURL = MODELS_LS_DATA['trap']['space-url']
-// let spaceURL = MODELS_LS_DATA['2-clips-12-epochs']['space-url']
-
-
-async function getMatrix(spaceURL) {
-  return fetch(spaceURL).then(response => response.arrayBuffer())
-    .then(buffer => { 
-      return new Float32Array(buffer, 0, buffer.byteLength / Float32Array.BYTES_PER_ELEMENT); 
-    });
-  }
-
-
-( async () => {
-  let LSMatrix = await getMatrix(spaceURL);
-  // console.log(LSMatrix);
-  
-  let matrix2 = new Float32Array(ROWS * INST_SIDE * COLS * INST_SIDE * LOOP_DURATION) 
-
-  let counter = 0;
+  // Reindex into matrix2 (flattened t-major)
+  const total = ROWS * INST_SIDE * COLS * INST_SIDE * LOOP_DURATION;
+  const matrix2 = new Float32Array(total);
+  let p = 0;
   for (let t = 0; t < LOOP_DURATION; t++) {
-      for (let r = 0; r < ROWS; r++) {
-          for (let i2 = 0; i2 < INST_SIDE; i2++) {
-              for (let c = 0; c < COLS; c++) {
-                  for (let i1 = 0; i1 < INST_SIDE; i1++) {
-                      let pos = ( i1 * LOOP_DURATION  ) + 
-                              ( c * NUM_DRUM_CLASSES * LOOP_DURATION ) + 
-                              ( i2 * LOOP_DURATION * INST_SIDE  ) +  
-                              ( r * NUM_DRUM_CLASSES * LOOP_DURATION * COLS ) + 
-                              t
-                      matrix2[counter] = LSMatrix[pos]
-                      counter++
-                  }
-              }
+    for (let r = 0; r < ROWS; r++) {
+      for (let i2 = 0; i2 < INST_SIDE; i2++) {
+        for (let c = 0; c < COLS; c++) {
+          for (let i1 = 0; i1 < INST_SIDE; i1++) {
+            const pos =
+              (i1 * LOOP_DURATION) +
+              (c * NUM_DRUM_CLASSES * LOOP_DURATION) +
+              (i2 * LOOP_DURATION * INST_SIDE) +
+              (r * NUM_DRUM_CLASSES * LOOP_DURATION * COLS) +
+              t;
+            matrix2[p++] = LSMatrix[pos];
           }
-      }
-  }
-  
-  
-  // ///////////////////////////////////////
-  // SCALE THE MATRIX TO ANY DESIRED SIZE
-  // Scaling factor is given by Px. Image is converted to Uint8ClampedArray
-  // ///////////////////////////////////////
-  //  let matrix3 = new Uint8ClampedArray(ROWS * INST_SIDE * COLS * INST_SIDE * LOOP_DURATION * Px * Px * 4) // Four bytes (R, G, B, A)
-  
-  
-  function scaleMatrix(t, r, c, pos, val) {
-    // scale the matrix given the factor Px
-      for(let y = 0; y < Px; y++) {
-        for(let x = 0; x < Px; x++) {
-          let idx = x * 4 + 
-                  y * ( 4 * COLS * INST_SIDE * Px ) + 
-                  r * ( 4 * COLS * INST_SIDE * Px * Px) + 
-                  c * ( Px * 4 ) + 
-                  t * ( COLS * INST_SIDE * ROWS * INST_SIDE * Px * Px * 4 )
-          if (val >= 0 && pos%INST_SIDE == 0) matrix3.set([val*255, 0, 0, 255], idx)
-          else if (val >= 0 && pos%INST_SIDE == 1) matrix3.set([0, val*255, 0, 255], idx) 
-          else if (val >= 0 && pos%INST_SIDE == 2) matrix3.set([0, 0, val*255, 255], idx)
-          
         }
-      }
-  
-  }
-  
-  // Iterate over all points
-  for(let t = 0; t < LOOP_DURATION; t++) {
-    for(let r = 0; r < ROWS * INST_SIDE; r++) {
-      for(let c = 0; c < COLS * INST_SIDE; c++) {
-          let pos = r * COLS * INST_SIDE + c + t * ROWS * INST_SIDE * COLS * INST_SIDE
-          let val = matrix2[pos]
-          scaleMatrix(t, r, c, pos, val)
       }
     }
   }
 
+  // Pre-scale once into per-frame RGB + store values
+  const planeW = COLS * INST_SIDE;
+  const planeH = ROWS * INST_SIDE;
+  const pixelsPerFrame = W * H;
+
+  for (let t = 0; t < LOOP_DURATION; t++) {
+    const rgb = new Uint8ClampedArray(pixelsPerFrame * 3);
+    const vals = new Float32Array(planeW * planeH);
+
+    for (let rr = 0; rr < planeH; rr++) {
+      for (let cc = 0; cc < planeW; cc++) {
+        const logicalIdx = rr * planeW + cc + t * planeW * planeH;
+        const val = matrix2[logicalIdx];
+        vals[rr * planeW + cc] = val;
+
+        // choose color by instrument plane (0,1,2)
+        const plane = (cc % INST_SIDE);
+        const r = plane === 0 ? val * 255 : 0;
+        const g = plane === 1 ? val * 255 : 0;
+        const b = plane === 2 ? val * 255 : 0;
+
+        // write Px×Px block into rgb (no alpha)
+        const x0 = cc * Px, y0 = rr * Px;
+        for (let y = 0; y < Px; y++) {
+          let base = ((y0 + y) * W + x0) * 3;
+          for (let x = 0; x < Px; x++) {
+            rgb[base] = r; rgb[base + 1] = g; rgb[base + 2] = b;
+            base += 3;
+          }
+        }
+      }
+    }
+
+    rgbFrames[t] = rgb;
+    valFrames[t] = vals;
+  }
 })();
 
+// Draw current frame: combine prebuilt RGB with thresholded alpha
+export function visualize(t) {
+  const rgb = rgbFrames[t];
+  const vals = valFrames[t];
+  if (!rgb || !vals) return;
 
-// VISUALIZE MATRIX
-let ctx = canvas.getContext('2d');
-// Since the canvas size is fixed to 900, this don't make sense
-const height = ROWS * INST_SIDE * Px;
-const width = COLS * INST_SIDE * Px;
-canvas.width = width;
-canvas.height = height;
+  const data = idata.data; // RGBA
+  const planeW = COLS * INST_SIDE;
 
-let idata;
-idata = ctx.createImageData(width, height);
+  // Fill RGBA
+  // 1) copy RGB (tight loop)
+  for (let i = 0, j = 0; i < rgb.length; i += 3, j += 4) {
+    data[j] = rgb[i];     // R
+    data[j + 1] = rgb[i + 1]; // G
+    data[j + 2] = rgb[i + 2]; // B
+    // A set below
+  }
+  // 2) set A from vals with threshold (per logical pixel -> expanded to Px×Px)
+  for (let rr = 0; rr < ROWS * INST_SIDE; rr++) {
+    for (let cc = 0; cc < COLS * INST_SIDE; cc++) {
+      const on = vals[rr * planeW + cc] >= threshold ? 255 : 0;
+      const x0 = cc * Px, y0 = rr * Px;
+      for (let y = 0; y < Px; y++) {
+        let base = ((y0 + y) * W + x0) * 4 + 3; // alpha offset
+        for (let x = 0; x < Px; x++) { data[base] = on; base += 4; }
+      }
+    }
+  }
 
-function visualize(t) {  
-  idata.data.set(matrix3.slice(width * height * 4 * (t), width * height * 4 * (t + 1)));
-  ctx.putImageData(idata,0,0);
+  ctx.putImageData(idata, 0, 0);
 }
-
-// window.addEventListener("load", () => { visualize(0) }, false );
-
-// 
-// 1. Arreglar la matriz, no crear todo cada vez, crear un array de 96 idata
-// 2. Crear funcion asincrónica
-// 3. TODO ver thresholds
-
-export { visualize }

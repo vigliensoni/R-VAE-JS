@@ -50,7 +50,14 @@ const noiseDial = new Nexus.Dial('#noiseDial',   { size:[50,50], interaction:'ve
 const tempoDial = new Nexus.Dial('#tempoDial',   { size:[50,50], interaction:'vertical', mode:'absolute', min:60,   max:200,  step:5,    value:tempoValue })
 const volumeDial= new Nexus.Dial('#volumeDial',  { size:[50,50], interaction:'vertical', mode:'absolute', min:0,    max:2,    step:0.025,value:volumeValue })
 
-threshold.on('change', v => thresholdValue = v)
+// sync initial value to visualizer
+vis.setVisibilityThreshold(thresholdValue)
+
+// handlers
+threshold.on('change', v => {
+  thresholdValue = v
+  vis.setVisibilityThreshold(v)
+})
 noiseDial.on('change',   v => noiseValue = v)
 tempoDial.on('change',   v => { tempoValue = v; clock.setTempo(tempoValue) })
 volumeDial.on('change',  v => { volumeValue = v })
