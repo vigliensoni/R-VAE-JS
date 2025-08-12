@@ -1,54 +1,32 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-    <meta charset="utf-8"/>
-    <title>RELS</title>
- <link href="https://fonts.googleapis.com/css?family=Staatliches" rel="stylesheet">  
- <script src="./libs/nexusUI.js"></script>
- <script src="./libs/maximilian.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/webmidi@2.0.0"></script>
- <link rel="stylesheet" href="./styleCSS.css" />
+    <meta charset="utf-8">
+    <title>R-VAE-JS</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet"> 
+
+    <link rel="stylesheet" href="./styleCSS.css" type="text/css">
 </head>
+
 <body>
-  <canvas id="performanceCanvas"></canvas>
-  <div>
-    <div id="title">R-VAE</div>
-    <div id="subtitle">Rhythmic explorations of latent spaces</div>
-    <div id="section">Easy exploration of latent spaces</div>
-    <div id="section">learned from a dataset of rhythms using a VAE</div>
+    <div class="center">
+        <p>This is R-VAE-JS</p>
+        <p>a rhythmic model player and visualizer for <a href="https://github.com/vigliensoni/R-VAE">R-VAE</a></p>
+        <p>Press <a href="./app.html>">Go!</a> to load a model and play</p>
+        <h1 id="goButton"><a href="./app.html">GO!</a></h1>
+        
+        <p>Instructions:</p>
+        <p>1. Move the mouse in the performance space</p>
+        <p>2. Click on the space to retrieve and decode a rhythm</p>
+        <p>3. Drag the mouse to interpolate rhythms</p>
+        <p>4. Change the Threshold to modify the number of onsets retrieved</p>
+        <p>5. Change the Noise to add variability to the position of the mouse</p>
+        <p>6. Mute individuals instruments by pressing Q, W, or E</p>
+        <p>7. Mute all by pressing R</p>
 
-
-    
-  <div><button id="playButton">Play</button></div>
-  <!-- <div><button id="stopButton" style="display:none">Stop</button></div> -->
-</div>
-<div id="oscilloscope"></div>
-<div id="spectrogram"></div>
-<div id="clock"></div>
-<div id="mutes">
-  <button id="kickPatternbutton">Kick - Q</button>
-  <button id="snarePatternbutton">Snare - W</button>
-  <button id="hihatPatternbutton">Hihat - E</button>
-</div>
-
-<div id="knobs">
-  <div id="thresholdDial">THRES</div>
-  <div id="noiseDial">NOISE</div>
-  <div id="tempoDial">TEMPO</div>
-</div>
-
-<div id="Instructions">
-  <div id="subtitle">Instructions:</div>
-  <div id="section">1. Using the mouse, move the yellow playback head in the performance space</div>
-  <div id="section">2. Click on the playback head to enable it and listen to the rhythm retrieved</div>
-  <div id="section">3. You can also drag the mouse to get rhythmic interpolations</div>
-  <div id="section">4. Increase the Threshold to retrieve simpler patterns</div>
-  <div id="section">5. Increase the Noise to add variability to the position of the playback head</div>
-  <div id="section">6. Mute individuals instruments by pressing Q, W, or E</div>
-</div>
+    </div>
 
 </body>
-<!-- <script src="app.js"></script> -->
-<script src="main.js"></script>
 </html>
-
