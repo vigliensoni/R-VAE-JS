@@ -1,20 +1,29 @@
+/* :root {
+  --canvassize: 900; */
+}
+
 #inner-container {
-  background-color: #8ED9FF;
+  /* background-color: #8ED9FF; */
+  background-color: #000000;
   width:800px;
   padding:20px;
   position:absolute;
 }
 
 #main-container {
-  background-color: #8ED9FF;
+  /* background-color: #8ED9FF; */
+  background-color: #000000;
   width:auto;
-  height:800px;
+  /* height: var(--canvassize); */
 }
 
+
 body {
-  font-family: 'Staatliches';
+  font-family: 'Rubik', sans-serif;
   font-size: 30px;
-  color: black;
+  /* color: black; */
+  color: whitesmoke;
+  background-color: #000000;
   text-align: left;
 }
 
@@ -32,13 +41,12 @@ body {
 
 button {
   background-color: transparent;
-  color:grey;
+  color:#FFD12C;
   border:solid black 5px;
-  width:120px;
   padding:10px;
   margin:10px;
-  font-family: 'Staatliches';
-    font-size: 25px;
+  font-family: 'Rubik';
+    font-size: 15px;
 }
 
 button:hover {
@@ -47,14 +55,163 @@ button:hover {
   border:solid #FFD12C 5px;
 }
 
-#knobs {
-  display: inline-block;
-  color: #red;
-  font-size: 100%;
+
+/* NUEVOS */
+#page-wrapper {
+	padding-bottom:1px;
 }
 
-/* #performanceCanvas {
-  position: fixed;
-  bottom: 0;
-  right: 0;
+
+
+.LSwrapper {
+  margin-top: -190px;
+  display: flex;
+  justify-content: center;
+}
+
+#logo {
+  position: relative;
+  top: -45px;
+	/* z-index:1;
+	top:0;
+	left:0;
+	width:300px; */
+}
+
+#logo a {
+	display:block;
+	width:50%;
+	color:#fff;
+	display:inline-block;
+	font-weight:600;
+	letter-spacing:3px;
+	text-align:left;
+	text-transform:uppercase;
+}
+
+#logo p{
+    font-size: 20px;
+}
+
+#nav {
+	margin-left:300px;
+	text-align:left;
+	position:absolute;
+	top:0;
+	left:0;
+	/* width:50%; */
+}
+
+#nav > ul {
+	margin:0;
+}
+
+#nav > ul > li {
+	display:inline-block;
+	margin-left:1em;
+}
+
+#nav > ul > li > ul {
+	display:none;
+}
+h2 {
+    font-size: 30px;
+    font-weight: normal;
+}
+.instructions ol, li{
+    color: #fff;
+    font-size: 24px;
+}
+
+/* #playButton {
+  margin-top: 50px;
 } */
+
+.botonPlay {
+  position: relative;
+  top: -70px;
+}
+
+.dials {
+  position: relative;
+  top: -40px;
+}
+
+
+#subtitle {
+  position: relative;
+  top: -50px;
+}
+
+.center {
+  text-align: center;
+}
+
+a:link {
+  color: white;
+}
+
+a:hover{
+  color: red;
+}
+
+
+/* SPACES */
+
+.spaceContainer {
+  top: 0px;
+  /* width: var(--canvassize); */
+  /* height: var(--canvassize); */
+  position: relative;
+  margin: auto;
+}
+.box {
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 1.0;
+  background: #0057e3;
+}
+.overlay {
+  z-index: 9;
+  margin: 0px;
+  opacity: 0.25;
+  background: #000000;
+}
+
+#LSVisualizer {
+  padding: 0;
+  display: block;
+  /* width: var(--canvassize); */
+  position: relative;
+  top: 0px;
+  background: #0d0d0d;
+  outline: rgb(30, 30, 30) 2px solid;
+}
+
+/* KNOBS */
+
+.outer-knobs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 70%;
+  color: white;
+  margin: 10px auto;
+  position: relative;
+  text-align:center;
+  top: -225px;
+}
+
+.knobs {
+  height: 100px;
+  width: 100px;
+  margin: 20px;
+}
+
+.knob-text {
+    margin-left: -5px;
+    font-size: 15px;
+    font: Rubik;
+}
