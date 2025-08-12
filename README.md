@@ -26,3 +26,10 @@ npm run build
 After webpack is executed all the required components will be packaged and ready to be used in the `dist` folder.
 
 The demo running on Github is served from the `docs` folder, and so the contents from `dist` have to be copied over.
+
+
+### Mappings
+#### Tempest mappings
+- C1 mapped to A12 (kk)
+- C#1 mapped to A11 (sn)
+- D1 mapped to A04 (hh)

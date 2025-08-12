@@ -141,4 +141,28 @@ window.addEventListener("keydown", event => {
   })
 
 
-export { mouseX, mouseY, canvas }
+
+// programmatic decode marker for knobs (latent coords -> red dot on overlay)
+function markDecodeAt(xNorm, yNorm) {
+  const SCALE_TO_MAX = 3;                   // must match normalize(..., 3)
+  // invert: (x/max - 0.5) * 2 * SCALE_TO_MAX
+  const px = ((xNorm / (2 * SCALE_TO_MAX)) + 0.5) * canvas.width;
+  const py = ((yNorm / (2 * SCALE_TO_MAX)) + 0.5) * canvas.height;
+
+  // draw previous (green), current (red)
+  if (Number.isFinite(mouseXprevious) && Number.isFinite(mouseYprevious)) {
+    mouseCanvasctx.fillStyle = "#00FF00";
+    mouseCanvasctx.beginPath();
+    mouseCanvasctx.arc(mouseXprevious * factor, mouseYprevious * factor, 10 * factor, 0, 2 * Math.PI);
+    mouseCanvasctx.fill();
+  }
+  mouseCanvasctx.fillStyle = "#FF0000";
+  mouseCanvasctx.beginPath();
+  mouseCanvasctx.arc(px * factor, py * factor, 10 * factor, 0, 2 * Math.PI);
+  mouseCanvasctx.fill();
+
+  mouseXprevious = px;
+  mouseYprevious = py;
+}
+
+export { mouseX, mouseY, canvas, markDecodeAt }
