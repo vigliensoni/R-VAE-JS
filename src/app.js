@@ -34,6 +34,9 @@ const snare = new maxi.maxiSample()
 const hihat = new maxi.maxiSample()
 const clock = new maxi.maxiClock()
 
+const midiOffsetMs = 80; // 70ms magic number latency
+
+
 // CLOCK
 const SUBDIV = 96
 const TICKS_PER_BEAT = 12
@@ -141,15 +144,17 @@ const clamp01 = v => Math.min(1, Math.max(0, v));
 
 const sendToAll = (note, velocityNorm = 0.8, dur = 100) => {
   if (!webmidi || number_of_MIDI_outputs === 0) return;
-  const v = clamp01(velocityNorm); // WebMidi.js default expects 0..1
+  const v = clamp01(velocityNorm);
+  const when = "+" + midiOffsetMs; // ms timestamp
+
   for (let i = 0; i < number_of_MIDI_outputs; i++) {
     const out = WebMidi.outputs[i];
     if (out && typeof out.playNote === "function") {
       try {
         out.playNote(note, MIDI_CH, {
-          duration: dur,
-          velocity: v       // <-- decoded velocity (0..1)
-          // rawVelocity: false // (default)
+          velocity: v,        // 0..1
+          duration: dur,      // ms
+          time: when          // schedule to align with audio
         });
       } catch (e) {
         const name = out ? out.name : 'unknown';
