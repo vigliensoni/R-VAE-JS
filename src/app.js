@@ -136,17 +136,28 @@ const setAllMutes = (muted) => {
 }
 
 // MIDI HELPERS
-const MIDI_CH = 10
-const sendToAll = (note, dur = 100) => {
-  if (!webmidi || number_of_MIDI_outputs === 0) return
+const MIDI_CH = 10;
+const clamp01 = v => Math.min(1, Math.max(0, v));
+
+const sendToAll = (note, velocityNorm = 0.8, dur = 100) => {
+  if (!webmidi || number_of_MIDI_outputs === 0) return;
+  const v = clamp01(velocityNorm); // WebMidi.js default expects 0..1
   for (let i = 0; i < number_of_MIDI_outputs; i++) {
-    const out = WebMidi.outputs[i]
+    const out = WebMidi.outputs[i];
     if (out && typeof out.playNote === "function") {
-      try { out.playNote(note, MIDI_CH, { duration: dur }) }
-      catch (e) { console.warn(`Output ${i} (${out.name}) skipped:`, e) }
+      try {
+        out.playNote(note, MIDI_CH, {
+          duration: dur,
+          velocity: v       // <-- decoded velocity (0..1)
+          // rawVelocity: false // (default)
+        });
+      } catch (e) {
+        const name = out ? out.name : 'unknown';
+        console.warn('Output ' + i + ' (' + name + ') skipped:', e);
+      }
     }
   }
-}
+};
 
 // KITS
 const KITS = [
@@ -188,26 +199,33 @@ const playAudio = () => {
       const tick = clock.playHead % SUBDIV
       vis.visualize(tick)
 
-      const kIdx = kkPat.indexOf(tick)
+      // Kick
+      const kIdx = kkPat.indexOf(tick);
       if (kIdx >= 0 && !kkMuted && !allMuted) {
-        kick.trigger()
-        kkAmp = (kkVel[kIdx] || 127) / 127
-        sendToAll("C1")
+        kick.trigger();
+        const kRaw = kkVel[kIdx];
+        kkAmp = ((kRaw != null ? kRaw : 127) / 127);   // 0..1, preserves 0
+        sendToAll("C1", kkAmp);                         // <-- use decoded velocity
       }
 
-      const sIdx = snPat.indexOf(tick)
+      // Snare
+      const sIdx = snPat.indexOf(tick);
       if (sIdx >= 0 && !snMuted && !allMuted) {
-        snare.trigger()
-        snAmp = (snVel[sIdx] || 127) / 127
-        sendToAll("C#1")
+        snare.trigger();
+        const sRaw = snVel[sIdx];
+        snAmp = ((sRaw != null ? sRaw : 127) / 127);
+        sendToAll("C#1", snAmp);
       }
 
-      const hIdx = hhPat.indexOf(tick)
+      // Hi-hat
+      const hIdx = hhPat.indexOf(tick);
       if (hIdx >= 0 && !hhMuted && !allMuted) {
-        hihat.trigger()
-        hhAmp = (hhVel[hIdx] || 127) / 127
-        sendToAll("D1")
+        hihat.trigger();
+        const hRaw = hhVel[hIdx];
+        hhAmp = ((hRaw != null ? hRaw : 127) / 127);
+        sendToAll("D1", hhAmp);
       }
+
     }
 
     let w = 0
