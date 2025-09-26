@@ -11,6 +11,20 @@ const snarePatternbutton = document.getElementById('snarePatternbutton')
 const hihatPatternbutton = document.getElementById('hihatPatternbutton')
 const allmuteButton = document.getElementById('allmuteButton')
 
+const browserMuteButton = document.getElementById('browserMuteButton')
+const midiToggleButton   = document.getElementById('midiToggleButton')
+
+// --- NEW STATE ---
+let browserSamplesMuted = false
+let midiEnabled = true   // MIDI sending allowed when true
+
+
+// helper to update button styles
+const setToggleButton = (el, active) => {
+  el.style.background = active ? "#4444FF" : "#000000"
+  el.style.color = active ? "#FFFFFF" : "#FFD12C"
+}
+
 // WEBMIDI
 let webmidi = false
 let number_of_MIDI_outputs = 0
@@ -143,18 +157,20 @@ const MIDI_CH = 10;
 const clamp01 = v => Math.min(1, Math.max(0, v));
 
 const sendToAll = (note, velocityNorm = 0.8, dur = 100) => {
+  if (!midiEnabled) return;                // <-- NEW guard
   if (!webmidi || number_of_MIDI_outputs === 0) return;
+
   const v = clamp01(velocityNorm);
-  const when = "+" + midiOffsetMs; // ms timestamp
+  const when = "+" + midiOffsetMs;
 
   for (let i = 0; i < number_of_MIDI_outputs; i++) {
     const out = WebMidi.outputs[i];
     if (out && typeof out.playNote === "function") {
       try {
         out.playNote(note, MIDI_CH, {
-          velocity: v,        // 0..1
-          duration: dur,      // ms
-          time: when          // schedule to align with audio
+          velocity: v,
+          duration: dur,
+          time: when
         });
       } catch (e) {
         const name = out ? out.name : 'unknown';
@@ -198,47 +214,48 @@ const playAudio = () => {
 
   let kkAmp = 0, snAmp = 0, hhAmp = 0
 
-  maxiEngine.play = function () {
-    clock.ticker()
-    if (clock.isTick()) {
-      const tick = clock.playHead % SUBDIV
-      vis.visualize(tick)
+maxiEngine.play = function () {
+  clock.ticker()
+  if (clock.isTick()) {
+    const tick = clock.playHead % SUBDIV
+    vis.visualize(tick)
 
-      // Kick
-      const kIdx = kkPat.indexOf(tick);
-      if (kIdx >= 0 && !kkMuted && !allMuted) {
-        kick.trigger();
-        const kRaw = kkVel[kIdx];
-        kkAmp = ((kRaw != null ? kRaw : 127) / 127);   // 0..1, preserves 0
-        sendToAll("C1", kkAmp);                         // <-- use decoded velocity
-      }
-
-      // Snare
-      const sIdx = snPat.indexOf(tick);
-      if (sIdx >= 0 && !snMuted && !allMuted) {
-        snare.trigger();
-        const sRaw = snVel[sIdx];
-        snAmp = ((sRaw != null ? sRaw : 127) / 127);
-        sendToAll("C#1", snAmp);
-      }
-
-      // Hi-hat
-      const hIdx = hhPat.indexOf(tick);
-      if (hIdx >= 0 && !hhMuted && !allMuted) {
-        hihat.trigger();
-        const hRaw = hhVel[hIdx];
-        hhAmp = ((hRaw != null ? hRaw : 127) / 127);
-        sendToAll("D1", hhAmp);
-      }
-
+    // Kick
+    const kIdx = kkPat.indexOf(tick);
+    if (kIdx >= 0 && !kkMuted && !allMuted) {
+      if (!browserSamplesMuted) kick.trigger();         // <-- condition
+      const kRaw = kkVel[kIdx];
+      kkAmp = ((kRaw != null ? kRaw : 127) / 127);
+      sendToAll("C1", kkAmp);
     }
 
-    let w = 0
+    // Snare
+    const sIdx = snPat.indexOf(tick);
+    if (sIdx >= 0 && !snMuted && !allMuted) {
+      if (!browserSamplesMuted) snare.trigger();
+      const sRaw = snVel[sIdx];
+      snAmp = ((sRaw != null ? sRaw : 127) / 127);
+      sendToAll("C#1", snAmp);
+    }
+
+    // Hi-hat
+    const hIdx = hhPat.indexOf(tick);
+    if (hIdx >= 0 && !hhMuted && !allMuted) {
+      if (!browserSamplesMuted) hihat.trigger();
+      const hRaw = hhVel[hIdx];
+      hhAmp = ((hRaw != null ? hRaw : 127) / 127);
+      sendToAll("D1", hhAmp);
+    }
+  }
+
+  let w = 0
+  if (!browserSamplesMuted) {                           // <-- condition
     w += kick.playOnce()  * kkAmp * volumeValue
     w += snare.playOnce() * snAmp * volumeValue
     w += hihat.playOnce()* hhAmp * volumeValue
-    return w
   }
+  return w
+}
 }
 
 playAudio()
@@ -257,6 +274,18 @@ hihatPatternbutton.addEventListener('mousedown', () => {
   setButton(hihatPatternbutton, hhMuted)
 })
 allmuteButton.addEventListener('mousedown', () => setAllMutes(!allMuted))
+
+
+// --- NEW BUTTON HANDLERS ---
+browserMuteButton.addEventListener('mousedown', () => {
+  browserSamplesMuted = !browserSamplesMuted
+  setToggleButton(browserMuteButton, browserSamplesMuted)
+})
+
+midiToggleButton.addEventListener('mousedown', () => {
+  midiEnabled = !midiEnabled
+  setToggleButton(midiToggleButton, !midiEnabled) // active = muted/off
+})
 
 // KEYBOARD
 window.addEventListener("keydown", (e) => {
