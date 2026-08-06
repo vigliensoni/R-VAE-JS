@@ -24,16 +24,17 @@
                 <!-- Logo -->
 
             <div id="logo">
-                <h1>R-VAE</h1>
-                <p id="subtitle">Rhythmic explorations <br>of latent spaces</p>
+                <h1>&nbsp;</h1>
+                <p id="subtitle">&nbsp; <br>&nbsp;</p>
             </div>
 
 
             <div class="outer-knobs">
                 <div class="knobs" id="thresholdDial"><div class="knob-text">THRES</div></div>
                 <div class="knobs" id="noiseDial"><div class="knob-text">NOISE</div></div>
-                <div class="knobs" id="tempoDial"><div class="knob-text">TEMPO</div></div>
-                <div class="knobs" id="volumeDial"><div class="knob-text">VOLUME</div></div>
+                <div class="knobs" id="tempoDial"><div class="knob-text">PULSE</div></div>
+                <div class="knobs" id="volumeDial"><div class="knob-text">TIDE</div></div>
+                <div class="knobs" id="trailDial"><div class="knob-text">TRAIL</div></div>
             </div>
 
 
@@ -52,12 +53,31 @@
 
         </div>
         <div id="mutes" class="center">
-            <button id="kickPatternbutton">Kk | Q</button>
-            <button id="snarePatternbutton">Sn | W</button>
-            <button id="hihatPatternbutton">Hh | E</button>
-            <button id="allmuteButton">All | R</button>
-            <button id="browserMuteButton">Mute Browser Samples</button>
-            <button id="midiToggleButton">Toggle MIDI</button>
+            <div class="instrument-row">
+                <div class="instrument-control">
+                    <button id="kickPatternbutton">Kk | Q</button>
+                    <select id="kkMidiNoteInput"></select>
+                </div>
+                <div class="instrument-control">
+                    <button id="snarePatternbutton">Sn | W</button>
+                    <select id="snMidiNoteInput"></select>
+                </div>
+                <div class="instrument-control">
+                    <button id="hihatPatternbutton">Hh | E</button>
+                    <select id="hhMidiNoteInput"></select>
+                </div>
+                <button id="allmuteButton">All | R</button>
+            </div>
+            <div class="utility-row">
+                <button id="browserMuteButton">Mute Browser Samples</button>
+                <button id="midiToggleButton">Toggle MIDI</button>
+            </div>
+        </div>
+        <div id="modelControls" class="center">
+            <label for="modelSelect">Model</label>
+            <select id="modelSelect"></select>
+            <button id="modelLoadButton">Load Model</button>
+            <span id="modelStatusLabel" class="model-status"></span>
         </div>
     </div><!-- wrapper -->
     <!-- page-wrapper -->

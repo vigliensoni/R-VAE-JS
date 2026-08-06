@@ -1,5 +1,4 @@
 // visualization.js
-import { MODELS_LS_DATA } from './constants.js';
 import { ROWS, COLS, LOOP_DURATION, NUM_DRUM_CLASSES, Px } from './constants.js';
 import { canvas } from './canvas.js';
 
@@ -7,48 +6,25 @@ const INST_SIDE = Math.sqrt(NUM_DRUM_CLASSES);
 const W = COLS * INST_SIDE * Px;
 const H = ROWS * INST_SIDE * Px;
 
-let threshold = 0.25;                  // just a variable; no rebuilds
+let threshold = 0.25; // just a variable; no rebuilds
 export const setVisibilityThreshold = v => { threshold = Math.min(1, Math.max(0, v)); };
 
-let rgbFrames = new Array(LOOP_DURATION);   // Uint8ClampedArray (W*H*3) per frame
-let valFrames = new Array(LOOP_DURATION);   // Float32Array       (W*H)   per frame
+let rgbFrames = [];
+let valFrames = [];
+let currentSpaceUrl = null;
+let latestRequestToken = 0;
 
 const ctx = canvas.getContext('2d');
 canvas.width = W; canvas.height = H;
 const idata = ctx.createImageData(W, H);
 
-// Build per-frame RGB + values once
-(async () => {
-  const url = MODELS_LS_DATA['trap']['space-url'];
-  const buf = await fetch(url).then(r => r.arrayBuffer());
-  const LSMatrix = new Float32Array(buf);
-
-  // Reindex into matrix2 (flattened t-major)
-  const total = ROWS * INST_SIDE * COLS * INST_SIDE * LOOP_DURATION;
-  const matrix2 = new Float32Array(total);
-  let p = 0;
-  for (let t = 0; t < LOOP_DURATION; t++) {
-    for (let r = 0; r < ROWS; r++) {
-      for (let i2 = 0; i2 < INST_SIDE; i2++) {
-        for (let c = 0; c < COLS; c++) {
-          for (let i1 = 0; i1 < INST_SIDE; i1++) {
-            const pos =
-              (i1 * LOOP_DURATION) +
-              (c * NUM_DRUM_CLASSES * LOOP_DURATION) +
-              (i2 * LOOP_DURATION * INST_SIDE) +
-              (r * NUM_DRUM_CLASSES * LOOP_DURATION * COLS) +
-              t;
-            matrix2[p++] = LSMatrix[pos];
-          }
-        }
-      }
-    }
-  }
-
-  // Pre-scale once into per-frame RGB + store values
+function rebuildFrames(matrix2) {
   const planeW = COLS * INST_SIDE;
   const planeH = ROWS * INST_SIDE;
   const pixelsPerFrame = W * H;
+
+  const rgbTmp = new Array(LOOP_DURATION);
+  const valTmp = new Array(LOOP_DURATION);
 
   for (let t = 0; t < LOOP_DURATION; t++) {
     const rgb = new Uint8ClampedArray(pixelsPerFrame * 3);
@@ -78,10 +54,53 @@ const idata = ctx.createImageData(W, H);
       }
     }
 
-    rgbFrames[t] = rgb;
-    valFrames[t] = vals;
+    rgbTmp[t] = rgb;
+    valTmp[t] = vals;
   }
-})();
+
+  rgbFrames = rgbTmp;
+  valFrames = valTmp;
+}
+
+function reindexLatentSpace(LSMatrix) {
+  const total = ROWS * INST_SIDE * COLS * INST_SIDE * LOOP_DURATION;
+  const matrix2 = new Float32Array(total);
+  let p = 0;
+  for (let t = 0; t < LOOP_DURATION; t++) {
+    for (let r = 0; r < ROWS; r++) {
+      for (let i2 = 0; i2 < INST_SIDE; i2++) {
+        for (let c = 0; c < COLS; c++) {
+          for (let i1 = 0; i1 < INST_SIDE; i1++) {
+            const pos =
+              (i1 * LOOP_DURATION) +
+              (c * NUM_DRUM_CLASSES * LOOP_DURATION) +
+              (i2 * LOOP_DURATION * INST_SIDE) +
+              (r * NUM_DRUM_CLASSES * LOOP_DURATION * COLS) +
+              t;
+            matrix2[p++] = LSMatrix[pos];
+          }
+        }
+      }
+    }
+  }
+  return matrix2;
+}
+
+export async function loadLatentSpace(spaceUrl) {
+  if (!spaceUrl) throw new Error('A latent-space URL is required');
+  latestRequestToken += 1;
+  const requestToken = latestRequestToken;
+  const response = await fetch(spaceUrl);
+  if (!response.ok) {
+    throw new Error(`Unable to load latent space (${response.status})`);
+  }
+  const buf = await response.arrayBuffer();
+  if (requestToken !== latestRequestToken) return; // newer request superseded this
+  const LSMatrix = new Float32Array(buf);
+  const matrix2 = reindexLatentSpace(LSMatrix);
+  rebuildFrames(matrix2);
+  currentSpaceUrl = spaceUrl;
+}
 
 // Draw current frame: combine prebuilt RGB with thresholded alpha
 export function visualize(t) {

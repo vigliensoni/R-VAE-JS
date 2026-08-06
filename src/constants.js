@@ -87,6 +87,11 @@ const MODELS_LS_DATA = {
     "model-url": "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/trap_all_files.model/model.json", 
     "space-url": "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/trap_all_files.model/model-matrix-LS.data"
   },
+  'future-step': {
+    "name": "future-step",
+    "model-url": "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/2-step-all-Future-Step/model.json", 
+    "space-url": "https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/2-step-all-Future-Step/model-matrix-LS.data"
+  },  
   '2-clips-12-epochs': {
     "name": "2-clips-12-epochs",
     "model-url": "data/02-clips-12-epochs/model.json", 
@@ -117,11 +122,16 @@ const COLS = 30
 const INST_SIDE = Math.sqrt(NUM_DRUM_CLASSES) // 3 - SIDE OF THE INSTRUMENT CUBE
 const Px = 4 // Number of pixels per point in the space
 
+const ACCENT_COLOR = "#FFD12C"
+const DEFAULT_TRAIL_SECONDS = 2
+
 
 exports.ROWS = ROWS;
 exports.COLS = COLS;
 exports.INST_SIDE = INST_SIDE;
 exports.Px = Px;
+exports.ACCENT_COLOR = ACCENT_COLOR;
+exports.DEFAULT_TRAIL_SECONDS = DEFAULT_TRAIL_SECONDS;
 
 
 

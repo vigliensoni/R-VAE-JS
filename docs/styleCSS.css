@@ -55,6 +55,13 @@ button:hover {
   border:solid #FFD12C 5px;
 }
 
+button:disabled {
+  opacity: 0.45;
+  border-color: #555;
+  color: #777;
+  cursor: not-allowed;
+}
+
 
 /* NUEVOS */
 #page-wrapper {
@@ -214,4 +221,78 @@ a:hover{
     margin-left: -5px;
     font-size: 15px;
     font: Rubik;
+}
+
+.instrument-row,
+.utility-row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 12px auto;
+}
+
+.instrument-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.instrument-control button,
+.utility-row button {
+  min-width: 90px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.instrument-control select {
+  background: #050505;
+  color: #FFE188;
+  border: 1px solid #FFE188;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: 'Rubik', sans-serif;
+  text-align-last: center;
+  width: 70px;
+  font-size: 13px;
+}
+
+.utility-row button {
+  min-width: 150px;
+}
+
+#modelControls {
+  margin: 18px auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+}
+
+#modelControls label {
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+#modelControls select {
+  background: #050505;
+  color: #FFE188;
+  border: 1px solid #FFE188;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-family: 'Rubik', sans-serif;
+  font-size: 15px;
+}
+
+.model-status {
+  min-height: 20px;
+  font-size: 14px;
+  color: #FFE188;
+}
+
+.model-status--error {
+  color: #FF6B6B;
 }

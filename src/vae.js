@@ -116,7 +116,7 @@ async function saveModel(filepath){
 
 async function loadModel(filepath){
   if (!model) initModel();
-  model.loadModel(filepath);
+  await model.loadModel(filepath);
   // console.log('GV loadModel');
 }
 
@@ -407,4 +407,3 @@ export { stopTraining };
 export { isReadyToGenerate };
 export { isTraining };
 export { setEpochs };
-

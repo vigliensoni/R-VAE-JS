@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "webpack",
+    "start": "node server/index.js"
   },
   "keywords": [],
   "author": "",
@@ -19,11 +20,14 @@
     "@tonejs/midi": "^2.0.20",
     "@tonejs/ui": "0.0.9",
     "@webcomponents/webcomponentsjs": "^2.4.3",
+    "abletonlink": "^0.2.0-beta.0",
+    "express": "^5.1.0",
     "fs": "0.0.1-security",
     "glob": "^7.1.6",
     "http-server": "^0.12.1",
     "lodash": "^4.17.15",
     "path": "^0.12.7",
-    "tone": "^13.8.25"
+    "tone": "^13.8.25",
+    "ws": "^8.18.3"
   }
 }

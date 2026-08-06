@@ -191,19 +191,6 @@ function processMidiFile(filename){
 
 // vae.loadModel("http://localhost:8080/footwork-model/model_2020616_135157.model/model.json")
 
-// FOOTWORK
-vae.loadModel(MODELS_LS_DATA['trap']['model-url'])
-// vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/footwork-model/model.json") 
-
-// TRAP
-// vae.loadModel(MODELS_LS_DATA['footwork']['model-url'])
-// vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/trap_all_files.model/model.json") 
-
-// FOOTWORK
-// vae.loadModel(MODELS_LS_DATA['2-clips-12-epochs']['model-url'])
-// vae.loadModel("https://raw.githubusercontent.com/vigliensoni/R-VAE-models/master/footwork-model/model.json") 
-
-
 /////////////////////////////////////////////////////////////
 // GENERATE 
 /////////////////////////////////////////////////////////////
@@ -219,51 +206,44 @@ function generate(z1, z2, threshold = thresholdValue, noise_range = noiseValue) 
 };
 
 async function generatePattern(z1, z2, threshold, noise_range){
-    // TODO: true added to skip contidition, need to check why this is needed
-    if (vae.isReadyToGenerate() || true){    
-      if (isGenerating) return;
-  
-      isGenerating = true;
-    //   note z2 axis is inverted, i.e., negative on top
-      let [onsets, velocities, timeshifts] = vae.generatePattern(z1, -1*z2, noise_range);
+    if (!vae.isReadyToGenerate()){
+      console.warn("Model is not ready to generate yet");
+      return;
+    }
+    if (isGenerating) return;
+
+    isGenerating = true;
+    // note z2 axis is inverted, i.e., negative on top
+    let [onsets, velocities, timeshifts] = vae.generatePattern(z1, -1*z2, noise_range);
     //   let NUM_DRUM_CLASSES = 3; // GV: To generate only [kk, sn, hh]
     //   drumOnsets = {} // GV Empty variable before declaring it again. Needed?
+    for (var i=0; i< NUM_DRUM_CLASSES; i++){
+        var sequence = []; // for velocity
+        var sequenceTS = []; // for timeshift
+        // output for matrix view
+        for (var j=0; j < LOOP_DURATION; j++){
+            if (onsets[i][j] > threshold){
+              sequence.push(Math.floor(velocities[i][j]*127. + 1)); // 0-1 -> 0-127
+              sequenceTS.push(Math.floor(utils.scale(timeshifts[i][j], -1., 1, 0, 127))); // -1 - 1 -> 0 - 127
+            } else {
+              sequence.push(0);
+              sequenceTS.push(64);
+            }
+        }
 
-      for (var i=0; i< NUM_DRUM_CLASSES; i++){
-          var sequence = []; // for velocity
-          var sequenceTS = []; // for timeshift
-          // output for matrix view
-          for (var j=0; j < LOOP_DURATION; j++){
-              if (onsets[i][j] > threshold){
-                sequence.push(Math.floor(velocities[i][j]*127. + 1)); // 0-1 -> 0-127
-                sequenceTS.push(Math.floor(utils.scale(timeshifts[i][j], -1., 1, 0, 127))); // -1 - 1 -> 0 - 127
-              } else {
-                sequence.push(0);
-                sequenceTS.push(64);
-              }
-          }
-  
-          // output for live.step object
-        //   Max.outlet("seq_output", i+1, sequence.join(" "));
-        //   console.log("seq_output", i+1, sequence.join(" "));
-        //   Max.outlet("timeshift_output", i+1, sequenceTS.join(" "));
-        
-        // One-liner to return indices of onsets (https://stackoverflow.com/questions/26468557/return-index-value-from-filter-method-javascript)
-        // GV Missing here is to store the velocity for each onset
-        let onsetIndices = sequence.map((value, index) => value > 0 ? index : undefined).filter(x => x !== undefined)
-        drumOnsets[i] = onsetIndices
-        let onsetVelocities = onsetIndices.map(x => sequence[x])
-        drumVelocities[i] = onsetVelocities
-      }
-    //   Max.outlet("generated", 1);
-    //   console.log("generated", 1);
-    //   utils.log_status("");
-    //   console.log("");
-      isGenerating = false;
-  } else {
-    //   utils.error_status("Model is not trained yet");
-      console.log("Model is not trained yet");
-  }
+        // output for live.step object
+      //   Max.outlet("seq_output", i+1, sequence.join(" "));
+      //   console.log("seq_output", i+1, sequence.join(" "));
+      //   Max.outlet("timeshift_output", i+1, sequenceTS.join(" "));
+      
+      // One-liner to return indices of onsets (https://stackoverflow.com/questions/26468557/return-index-value-from-filter-method-javascript)
+      // GV Missing here is to store the velocity for each onset
+      let onsetIndices = sequence.map((value, index) => value > 0 ? index : undefined).filter(x => x !== undefined)
+      drumOnsets[i] = onsetIndices
+      let onsetVelocities = onsetIndices.map(x => sequence[x])
+      drumVelocities[i] = onsetVelocities
+    }
+    isGenerating = false;
 }
 
 // // Generate a rhythm pattern
@@ -322,6 +302,7 @@ var snVel = []
 var hhVel = []
 
 function latspaceRetriever (mouseX, mouseY) {
+    if (!vae.isReadyToGenerate()) return;
     generate(mouseX, 
             mouseY,
             sequencerApp.thresholdValue, 
@@ -334,6 +315,5 @@ function latspaceRetriever (mouseX, mouseY) {
     hhVel = drumVelocities[2];
 }
 
-export { latspaceRetriever, kkPat, snPat, hhPat, kkVel, snVel, hhVel } 
-
-
+export { latspaceRetriever, kkPat, snPat, hhPat, kkVel, snVel, hhVel }
+export { loadModelById, getActiveModelId, initialModelPromise } from './modelRegistry.js'

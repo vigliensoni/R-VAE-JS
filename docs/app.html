@@ -52,10 +52,31 @@
 
         </div>
         <div id="mutes" class="center">
-            <button id="kickPatternbutton">Kk | Q</button>
-            <button id="snarePatternbutton">Sn | W</button>
-            <button id="hihatPatternbutton">Hh | E</button>
-            <button id="allmuteButton">All | R</button>
+            <div class="instrument-row">
+                <div class="instrument-control">
+                    <button id="kickPatternbutton">Kk | Q</button>
+                    <select id="kkMidiNoteInput"></select>
+                </div>
+                <div class="instrument-control">
+                    <button id="snarePatternbutton">Sn | W</button>
+                    <select id="snMidiNoteInput"></select>
+                </div>
+                <div class="instrument-control">
+                    <button id="hihatPatternbutton">Hh | E</button>
+                    <select id="hhMidiNoteInput"></select>
+                </div>
+                <button id="allmuteButton">All | R</button>
+            </div>
+            <div class="utility-row">
+                <button id="browserMuteButton">Mute Browser Samples</button>
+                <button id="midiToggleButton">Toggle MIDI</button>
+            </div>
+        </div>
+        <div id="modelControls" class="center">
+            <label for="modelSelect">Model</label>
+            <select id="modelSelect"></select>
+            <button id="modelLoadButton">Load Model</button>
+            <span id="modelStatusLabel" class="model-status"></span>
         </div>
     </div><!-- wrapper -->
     <!-- page-wrapper -->

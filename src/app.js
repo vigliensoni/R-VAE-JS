@@ -1,9 +1,11 @@
 // AUDIO CLOCK + SAMPLES (optimized)
 
-import { kkPat, snPat, hhPat, kkVel, snVel, hhVel } from "."
+import { kkPat, snPat, hhPat, kkVel, snVel, hhVel, latspaceRetriever } from "."
+import { loadModelById, getActiveModelId, initialModelPromise } from "./modelRegistry.js"
 import * as vis from "./visualization.js"
-import { latspaceRetriever } from '.';
-import { mouseX as lsX, mouseY as lsY, markDecodeAt } from './canvas.js'
+import { mouseX as lsX, mouseY as lsY, markDecodeAt, setTrailFadeSeconds } from './canvas.js'
+import { LinkClock, createLinkSocket } from './linkClock.js'
+import { ACCENT_COLOR, DEFAULT_TRAIL_SECONDS, MODELS_LS_DATA } from './constants.js'
 
 // UI
 const kickPatternbutton = document.getElementById('kickPatternbutton')
@@ -13,6 +15,12 @@ const allmuteButton = document.getElementById('allmuteButton')
 
 const browserMuteButton = document.getElementById('browserMuteButton')
 const midiToggleButton   = document.getElementById('midiToggleButton')
+const kkMidiNoteInput = document.getElementById('kkMidiNoteInput')
+const snMidiNoteInput = document.getElementById('snMidiNoteInput')
+const hhMidiNoteInput = document.getElementById('hhMidiNoteInput')
+const modelSelect = document.getElementById('modelSelect')
+const modelLoadButton = document.getElementById('modelLoadButton')
+const modelStatusLabel = document.getElementById('modelStatusLabel')
 
 // --- NEW STATE ---
 let browserSamplesMuted = false
@@ -24,6 +32,60 @@ const setToggleButton = (el, active) => {
   el.style.background = active ? "#4444FF" : "#000000"
   el.style.color = active ? "#FFFFFF" : "#FFD12C"
 }
+
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v))
+
+// MIDI note helpers
+const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+const NOTE_SELECT_MIN = 24 // C1
+const NOTE_SELECT_MAX = 96 // C7
+
+const midiToNoteLabel = (value) => {
+  if (!Number.isFinite(value)) return ""
+  const midi = clamp(Math.round(value), 0, 127)
+  const octave = Math.floor(midi / 12) - 1
+  const note = NOTE_NAMES[midi % 12]
+  return `${note}${octave}`
+}
+
+const NOTE_OPTIONS = Array.from(
+  { length: NOTE_SELECT_MAX - NOTE_SELECT_MIN + 1 },
+  (_, idx) => {
+    const midi = NOTE_SELECT_MIN + idx
+    return { midi, label: midiToNoteLabel(midi) }
+  }
+)
+
+const clampMidiNote = (value, fallback) => {
+  const num = Number(value)
+  if (!Number.isFinite(num)) return fallback
+  return clamp(Math.round(num), NOTE_SELECT_MIN, NOTE_SELECT_MAX)
+}
+
+const populateNoteSelect = (select, selectedValue) => {
+  if (!select) return
+  select.innerHTML = NOTE_OPTIONS.map(
+    ({ midi, label }) => `<option value="${midi}">${label}</option>`
+  ).join("")
+  setSelectValue(select, selectedValue)
+}
+
+const setSelectValue = (select, value) => {
+  if (!select) return
+  const bounded = clamp(Math.round(value), NOTE_SELECT_MIN, NOTE_SELECT_MAX)
+  select.value = String(bounded)
+}
+
+// Give Nexus knobs a palette that matches the UI
+const nexusTheme = {
+  accent: ACCENT_COLOR,
+  fill: "#080808",
+  light: "#FFE188",
+  dark: "#050505",
+  mediumLight: "#2F2F2F",
+  mediumDark: "#151515",
+}
+Object.assign(Nexus.colors, nexusTheme)
 
 // WEBMIDI
 let webmidi = false
@@ -46,28 +108,49 @@ const maxiEngine = new maxi.maxiAudio()
 const kick = new maxi.maxiSample()
 const snare = new maxi.maxiSample()
 const hihat = new maxi.maxiSample()
-const clock = new maxi.maxiClock()
 
 const midiOffsetMs = 80; // 70ms magic number latency
 
 
 // CLOCK
 const SUBDIV = 96
-const TICKS_PER_BEAT = 12
-clock.setTempo(160)
-clock.setTicksPerBeat(TICKS_PER_BEAT)
+const TEMPO_MIN = 20
+const TEMPO_MAX = 200
+const TEMPO_STEP = 5
+const DEFAULT_TEMPO = 160
+const TRAIL_MIN_SECONDS = 0.5
+const TRAIL_MAX_SECONDS = 8
+const TRAIL_STEP_SECONDS = 0.25
+const DEFAULT_KK_MIDI = 60 // C3
+const DEFAULT_SN_MIDI = 67 // G3
+const DEFAULT_HH_MIDI = 72 // C4
+const MODEL_IDS = Object.keys(MODELS_LS_DATA)
 
 // DIAL STATE
 let thresholdValue = 0.25
 let noiseValue = 0
-let tempoValue = 160
+let tempoValue = DEFAULT_TEMPO
 let volumeValue = 1.0
+let trailFadeValue = DEFAULT_TRAIL_SECONDS
+let kkMidiNote = DEFAULT_KK_MIDI
+let snMidiNote = DEFAULT_SN_MIDI
+let hhMidiNote = DEFAULT_HH_MIDI
+
+const clock = new LinkClock({
+  subdivisions: SUBDIV,
+  beatsPerBar: 4,
+  initialTempo: tempoValue,
+})
+
+let linkSocket = null
+let suppressTempoBroadcast = false
 
 // DIALS
 const threshold = new Nexus.Dial('#thresholdDial', { size:[50,50], interaction:'vertical', mode:'absolute', min:0.01, max:0.99, step:0.01, value:thresholdValue })
 const noiseDial = new Nexus.Dial('#noiseDial',   { size:[50,50], interaction:'vertical', mode:'absolute', min:0.00, max:1.0,  step:0.01, value:noiseValue })
-const tempoDial = new Nexus.Dial('#tempoDial',   { size:[50,50], interaction:'vertical', mode:'absolute', min:60,   max:200,  step:5,    value:tempoValue })
+const tempoDial = new Nexus.Dial('#tempoDial',   { size:[50,50], interaction:'vertical', mode:'absolute', min:TEMPO_MIN, max:TEMPO_MAX, step:TEMPO_STEP, value:tempoValue })
 const volumeDial= new Nexus.Dial('#volumeDial',  { size:[50,50], interaction:'vertical', mode:'absolute', min:0,    max:2,    step:0.025,value:volumeValue })
+const trailDial = new Nexus.Dial('#trailDial',   { size:[50,50], interaction:'vertical', mode:'absolute', min:TRAIL_MIN_SECONDS, max:TRAIL_MAX_SECONDS, step:TRAIL_STEP_SECONDS, value:trailFadeValue })
 
 // sync threshold with visualizer
 vis.setVisibilityThreshold(thresholdValue)
@@ -84,8 +167,143 @@ noiseDial.on('change', v => {
 })
 
 // other dials
-tempoDial.on('change',   v => { tempoValue = v; clock.setTempo(tempoValue) })
+tempoDial.on('change',   v => {
+  tempoValue = v
+  clock.setTempo(tempoValue)
+  if (!suppressTempoBroadcast && linkSocket) {
+    linkSocket.sendTempo(tempoValue)
+  }
+})
 volumeDial.on('change',  v => { volumeValue = v })
+trailDial.on('change', v => {
+  trailFadeValue = v
+  setTrailFadeSeconds(v)
+})
+
+populateNoteSelect(kkMidiNoteInput, kkMidiNote)
+populateNoteSelect(snMidiNoteInput, snMidiNote)
+populateNoteSelect(hhMidiNoteInput, hhMidiNote)
+
+const modelName = (id) => {
+  const entry = MODELS_LS_DATA[id]
+  return entry && entry.name ? entry.name : id
+}
+
+const populateModelSelect = () => {
+  if (!modelSelect) return
+  const options = MODEL_IDS.map(id => `<option value="${id}">${modelName(id)}</option>`).join("")
+  modelSelect.innerHTML = options
+  const current = getActiveModelId()
+  if (current) modelSelect.value = current
+}
+
+const setModelUiDisabled = (isDisabled) => {
+  if (modelSelect) modelSelect.disabled = isDisabled
+  if (modelLoadButton) modelLoadButton.disabled = isDisabled
+}
+
+const setModelStatus = (text = "", isError = false) => {
+  if (!modelStatusLabel) return
+  modelStatusLabel.textContent = text
+  modelStatusLabel.classList.toggle('model-status--error', Boolean(isError))
+}
+
+const refreshCurrentLatent = () => {
+  const cx = Number.isFinite(lsX) ? lsX : 0
+  const cy = Number.isFinite(lsY) ? lsY : 0
+  triggerFromLatent(cx, cy)
+}
+
+populateModelSelect()
+if (initialModelPromise) {
+  setModelUiDisabled(true)
+  setModelStatus(`Loading ${modelName(getActiveModelId())}…`)
+  initialModelPromise
+    .then(() => {
+      setModelStatus(`${modelName(getActiveModelId())} ready`)
+      refreshCurrentLatent()
+    })
+    .catch(err => {
+      console.error('Initial model failed to load', err)
+      setModelStatus('Failed to load initial model', true)
+    })
+    .finally(() => setModelUiDisabled(false))
+}
+
+async function handleModelLoadRequest(modelId) {
+  if (!modelId) return
+  setModelUiDisabled(true)
+  setModelStatus(`Loading ${modelName(modelId)}…`)
+  try {
+    await loadModelById(modelId)
+    setModelStatus(`${modelName(modelId)} ready`)
+    refreshCurrentLatent()
+  } catch (err) {
+    console.error('Unable to load model', err)
+    setModelStatus('Model failed to load', true)
+  } finally {
+    setModelUiDisabled(false)
+  }
+}
+
+if (modelLoadButton) {
+  modelLoadButton.addEventListener('click', () => {
+    if (!modelSelect) return
+    handleModelLoadRequest(modelSelect.value)
+  })
+}
+
+if (modelSelect) {
+  modelSelect.addEventListener('change', () => {
+    setModelStatus(`Selected ${modelName(modelSelect.value)}`)
+  })
+}
+
+if (kkMidiNoteInput) {
+  kkMidiNoteInput.addEventListener('change', (e) => {
+    kkMidiNote = clampMidiNote(e.target.value, kkMidiNote)
+    setSelectValue(kkMidiNoteInput, kkMidiNote)
+  })
+}
+
+if (snMidiNoteInput) {
+  snMidiNoteInput.addEventListener('change', (e) => {
+    snMidiNote = clampMidiNote(e.target.value, snMidiNote)
+    setSelectValue(snMidiNoteInput, snMidiNote)
+  })
+}
+
+if (hhMidiNoteInput) {
+  hhMidiNoteInput.addEventListener('change', (e) => {
+    hhMidiNote = clampMidiNote(e.target.value, hhMidiNote)
+    setSelectValue(hhMidiNoteInput, hhMidiNote)
+  })
+}
+
+function syncTempoDialWithRemote(bpm) {
+  if (!Number.isFinite(bpm)) return
+  const bounded = clamp(bpm, TEMPO_MIN, TEMPO_MAX)
+  if (Math.abs(bounded - tempoValue) < 0.001) return
+  suppressTempoBroadcast = true
+  tempoValue = bounded
+  tempoDial.value = bounded
+  if (typeof tempoDial.render === 'function') tempoDial.render()
+  suppressTempoBroadcast = false
+}
+
+function initLinkClockBridge() {
+  linkSocket = createLinkSocket({
+    onState: (state = {}, timestamp) => {
+      clock.updateFromRemote({ ...state, timestamp })
+      syncTempoDialWithRemote(state.bpm)
+    },
+    onOpen: () => console.log("Ableton Link bridge connected"),
+    onClose: () => console.log("Ableton Link bridge disconnected, retrying..."),
+  })
+}
+
+initLinkClockBridge()
+setTrailFadeSeconds(trailFadeValue)
 
 // Helper to trigger decode/play from latent coords
 function triggerFromLatent(x, y) {
@@ -98,7 +316,6 @@ function triggerFromLatent(x, y) {
 // Noise wander settings
 const MAX_RADIUS = 3
 const LIMIT = 3
-const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v))
 
 function sampleInDisk(R) {
   const u = Math.random()
@@ -160,7 +377,7 @@ const sendToAll = (note, velocityNorm = 0.8, dur = 100) => {
   if (!midiEnabled) return;                // <-- NEW guard
   if (!webmidi || number_of_MIDI_outputs === 0) return;
 
-  const v = clamp01(velocityNorm);
+  const v = clamp01(velocityNorm * volumeValue); // level dial also scales outgoing MIDI
   const when = "+" + midiOffsetMs;
 
   for (let i = 0; i < number_of_MIDI_outputs; i++) {
@@ -226,7 +443,7 @@ maxiEngine.play = function () {
       if (!browserSamplesMuted) kick.trigger();         // <-- condition
       const kRaw = kkVel[kIdx];
       kkAmp = ((kRaw != null ? kRaw : 127) / 127);
-      sendToAll("C1", kkAmp);
+      sendToAll(kkMidiNote, kkAmp);
     }
 
     // Snare
@@ -235,7 +452,7 @@ maxiEngine.play = function () {
       if (!browserSamplesMuted) snare.trigger();
       const sRaw = snVel[sIdx];
       snAmp = ((sRaw != null ? sRaw : 127) / 127);
-      sendToAll("C#1", snAmp);
+      sendToAll(snMidiNote, snAmp);
     }
 
     // Hi-hat
@@ -244,7 +461,7 @@ maxiEngine.play = function () {
       if (!browserSamplesMuted) hihat.trigger();
       const hRaw = hhVel[hIdx];
       hhAmp = ((hRaw != null ? hRaw : 127) / 127);
-      sendToAll("D1", hhAmp);
+      sendToAll(hhMidiNote, hhAmp);
     }
   }
 
