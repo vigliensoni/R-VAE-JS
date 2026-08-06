@@ -21,6 +21,12 @@ const hhMidiNoteInput = document.getElementById('hhMidiNoteInput')
 const modelSelect = document.getElementById('modelSelect')
 const modelLoadButton = document.getElementById('modelLoadButton')
 const modelStatusLabel = document.getElementById('modelStatusLabel')
+const midiLearnXButton = document.getElementById('midiLearnXButton')
+const midiLearnYButton = document.getElementById('midiLearnYButton')
+const midiLearnXStatus = document.getElementById('midiLearnXStatus')
+const midiLearnYStatus = document.getElementById('midiLearnYStatus')
+const midiLearnXClearButton = document.getElementById('midiLearnXClearButton')
+const midiLearnYClearButton = document.getElementById('midiLearnYClearButton')
 
 // --- NEW STATE ---
 let browserSamplesMuted = false
@@ -91,6 +97,12 @@ Object.assign(Nexus.colors, nexusTheme)
 let webmidi = false
 let number_of_MIDI_outputs = 0
 
+const attachCcListener = (input) => {
+  if (!input || input.__rvaeCcAttached) return
+  input.__rvaeCcAttached = true
+  input.addListener('controlchange', 'all', e => handleIncomingCC(e))
+}
+
 WebMidi.enable(err => {
   if (err) {
     console.log("WebMidi could not be enabled.", err)
@@ -100,6 +112,16 @@ WebMidi.enable(err => {
   console.log("WebMidi enabled!")
   number_of_MIDI_outputs = WebMidi.outputs.length
   webmidi = true
+
+  console.log("MIDI inputs:", WebMidi.inputs.map(i => i.name))
+  WebMidi.inputs.forEach(attachCcListener)
+  WebMidi.addListener('connected', e => {
+    number_of_MIDI_outputs = WebMidi.outputs.length
+    if (e.port && e.port.type === 'input') {
+      console.log("MIDI input connected:", e.port.name)
+      attachCcListener(e.port)
+    }
+  })
 })
 
 // MAXI
@@ -316,6 +338,100 @@ function triggerFromLatent(x, y) {
 // Noise wander settings
 const MAX_RADIUS = 3
 const LIMIT = 3
+
+// MIDI LEARN — bind incoming CC messages to the latent X/Y playback head
+const MIDI_LEARN_STORAGE_KEY = 'rvae.midiLearnMap'
+let midiLearnMap = { x: null, y: null }   // { channel, controller } per axis, or null when unmapped
+let midiLearnTarget = null                // 'x' | 'y' while armed and waiting for the next CC
+let midiLatentX = 0
+let midiLatentY = 0
+
+const isValidBinding = (b) => !!b && Number.isInteger(b.channel) && Number.isInteger(b.controller)
+
+const loadMidiLearnMap = () => {
+  try {
+    const raw = localStorage.getItem(MIDI_LEARN_STORAGE_KEY)
+    if (!raw) return
+    const parsed = JSON.parse(raw)
+    if (isValidBinding(parsed && parsed.x)) midiLearnMap.x = parsed.x
+    if (isValidBinding(parsed && parsed.y)) midiLearnMap.y = parsed.y
+  } catch (e) {
+    console.warn('Failed to load MIDI learn mapping', e)
+  }
+}
+
+const saveMidiLearnMap = () => {
+  try {
+    localStorage.setItem(MIDI_LEARN_STORAGE_KEY, JSON.stringify(midiLearnMap))
+  } catch (e) {
+    console.warn('Failed to save MIDI learn mapping', e)
+  }
+}
+
+const bindingLabel = (b) => (b ? `Ch${b.channel} CC${b.controller}` : 'Unmapped')
+
+const refreshMidiLearnUi = () => {
+  if (midiLearnXStatus) {
+    midiLearnXStatus.textContent = midiLearnTarget === 'x' ? 'Listening…' : bindingLabel(midiLearnMap.x)
+  }
+  if (midiLearnYStatus) {
+    midiLearnYStatus.textContent = midiLearnTarget === 'y' ? 'Listening…' : bindingLabel(midiLearnMap.y)
+  }
+  if (midiLearnXButton) midiLearnXButton.classList.toggle('learning', midiLearnTarget === 'x')
+  if (midiLearnYButton) midiLearnYButton.classList.toggle('learning', midiLearnTarget === 'y')
+}
+
+const armMidiLearn = (axis) => {
+  midiLearnTarget = midiLearnTarget === axis ? null : axis
+  refreshMidiLearnUi()
+}
+
+const clearMidiLearn = (axis) => {
+  midiLearnMap[axis] = null
+  if (midiLearnTarget === axis) midiLearnTarget = null
+  saveMidiLearnMap()
+  refreshMidiLearnUi()
+}
+
+if (midiLearnXButton) midiLearnXButton.addEventListener('click', () => armMidiLearn('x'))
+if (midiLearnYButton) midiLearnYButton.addEventListener('click', () => armMidiLearn('y'))
+if (midiLearnXClearButton) midiLearnXClearButton.addEventListener('click', () => clearMidiLearn('x'))
+if (midiLearnYClearButton) midiLearnYClearButton.addEventListener('click', () => clearMidiLearn('y'))
+
+loadMidiLearnMap()
+refreshMidiLearnUi()
+
+const ccToLatent = (raw) => (clamp(raw, 0, 127) / 127) * (2 * LIMIT) - LIMIT
+const isBindingMatch = (b, channel, controller) => !!b && b.channel === channel && b.controller === controller
+
+function handleIncomingCC(e) {
+  const channel = e.channel
+  const controller = e.controller && e.controller.number
+  if (!Number.isInteger(channel) || !Number.isInteger(controller)) return
+
+  if (midiLearnTarget) {
+    midiLearnMap[midiLearnTarget] = { channel, controller }
+    midiLearnTarget = null
+    saveMidiLearnMap()
+    refreshMidiLearnUi()
+    return
+  }
+
+  // webmidi v2 reports `value` as the raw 0-127 CC byte for controlchange events.
+  const rawValue = Number.isFinite(e.value) ? e.value : 0
+  let matched = false
+
+  if (isBindingMatch(midiLearnMap.x, channel, controller)) {
+    midiLatentX = ccToLatent(rawValue)
+    matched = true
+  }
+  if (isBindingMatch(midiLearnMap.y, channel, controller)) {
+    midiLatentY = -ccToLatent(rawValue) // invert: CC increasing should move the head down, matching the mouse/canvas Y convention
+    matched = true
+  }
+
+  if (matched) triggerFromLatent(midiLatentX, midiLatentY)
+}
 
 function sampleInDisk(R) {
   const u = Math.random()

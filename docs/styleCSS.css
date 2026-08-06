@@ -296,3 +296,36 @@ a:hover{
 .model-status--error {
   color: #FF6B6B;
 }
+
+#midiLearnControls {
+  margin: 12px auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.midi-learn-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.midi-learn-label {
+  min-width: 64px;
+  font-size: 15px;
+  letter-spacing: 1px;
+  color: #FFE188;
+}
+
+.midi-learn-row .model-status {
+  min-width: 110px;
+  text-align: center;
+}
+
+.midi-learn-row button.learning {
+  background: #4444FF;
+  color: #FFFFFF;
+}
