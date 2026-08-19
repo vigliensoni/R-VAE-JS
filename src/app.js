@@ -15,6 +15,7 @@ const allmuteButton = document.getElementById('allmuteButton')
 
 const browserMuteButton = document.getElementById('browserMuteButton')
 const midiToggleButton   = document.getElementById('midiToggleButton')
+const midiMaxVelocityButton = document.getElementById('midiMaxVelocityButton')
 const kkMidiNoteInput = document.getElementById('kkMidiNoteInput')
 const snMidiNoteInput = document.getElementById('snMidiNoteInput')
 const hhMidiNoteInput = document.getElementById('hhMidiNoteInput')
@@ -31,6 +32,7 @@ const midiLearnYClearButton = document.getElementById('midiLearnYClearButton')
 // --- NEW STATE ---
 let browserSamplesMuted = false
 let midiEnabled = true   // MIDI sending allowed when true
+let midiMaxVelocity = false   // when true, outgoing MIDI notes ignore the decoded velocity and send max (127)
 
 
 // helper to update button styles
@@ -404,6 +406,21 @@ refreshMidiLearnUi()
 const ccToLatent = (raw) => (clamp(raw, 0, 127) / 127) * (2 * LIMIT) - LIMIT
 const isBindingMatch = (b, channel, controller) => !!b && b.channel === channel && b.controller === controller
 
+// Hardware controllers can stream CC messages far faster than a synchronous
+// VAE decode can keep up with. Track the latest value instantly, but only
+// flush a decode once per animation frame so bursts collapse into the
+// latest position instead of queuing up and lagging behind in real time.
+let midiLatentDirty = false
+
+function midiLatentTicker() {
+  if (midiLatentDirty) {
+    midiLatentDirty = false
+    triggerFromLatent(midiLatentX, midiLatentY)
+  }
+  requestAnimationFrame(midiLatentTicker)
+}
+requestAnimationFrame(midiLatentTicker)
+
 function handleIncomingCC(e) {
   const channel = e.channel
   const controller = e.controller && e.controller.number
@@ -419,18 +436,15 @@ function handleIncomingCC(e) {
 
   // webmidi v2 reports `value` as the raw 0-127 CC byte for controlchange events.
   const rawValue = Number.isFinite(e.value) ? e.value : 0
-  let matched = false
 
   if (isBindingMatch(midiLearnMap.x, channel, controller)) {
     midiLatentX = ccToLatent(rawValue)
-    matched = true
+    midiLatentDirty = true
   }
   if (isBindingMatch(midiLearnMap.y, channel, controller)) {
     midiLatentY = -ccToLatent(rawValue) // invert: CC increasing should move the head down, matching the mouse/canvas Y convention
-    matched = true
+    midiLatentDirty = true
   }
-
-  if (matched) triggerFromLatent(midiLatentX, midiLatentY)
 }
 
 function sampleInDisk(R) {
@@ -493,7 +507,8 @@ const sendToAll = (note, velocityNorm = 0.8, dur = 100) => {
   if (!midiEnabled) return;                // <-- NEW guard
   if (!webmidi || number_of_MIDI_outputs === 0) return;
 
-  const v = clamp01(velocityNorm * volumeValue); // level dial also scales outgoing MIDI
+  const effectiveVelocityNorm = midiMaxVelocity ? 1 : velocityNorm
+  const v = clamp01(effectiveVelocityNorm * volumeValue); // level dial also scales outgoing MIDI
   const when = "+" + midiOffsetMs;
 
   for (let i = 0; i < number_of_MIDI_outputs; i++) {
@@ -620,6 +635,13 @@ midiToggleButton.addEventListener('mousedown', () => {
   setToggleButton(midiToggleButton, !midiEnabled) // active = muted/off
 })
 
+const toggleMidiMaxVelocity = () => {
+  midiMaxVelocity = !midiMaxVelocity
+  if (midiMaxVelocityButton) setToggleButton(midiMaxVelocityButton, midiMaxVelocity)
+}
+
+if (midiMaxVelocityButton) midiMaxVelocityButton.addEventListener('mousedown', toggleMidiMaxVelocity)
+
 // KEYBOARD
 window.addEventListener("keydown", (e) => {
   switch (e.key) {
@@ -627,6 +649,7 @@ window.addEventListener("keydown", (e) => {
     case "w": if (!allMuted) { snMuted = true; setButton(snarePatternbutton, true) } break
     case "e": if (!allMuted) { hhMuted = true; setButton(hihatPatternbutton, true) } break
     case "r": setAllMutes(!allMuted); break
+    case "v": toggleMidiMaxVelocity(); break
     case "1": loadKit(0); break
     case "2": loadKit(1); break
     case "3": loadKit(2); break
